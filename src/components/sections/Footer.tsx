@@ -1,0 +1,103 @@
+import { ScrollReveal } from '../ScrollReveal'
+import { PillButton } from '../PillButton'
+import { Logo } from '../Logo'
+
+interface FooterProps {
+  onBook: () => void
+}
+
+const links = {
+  company: ['О нас', 'Команда', 'Карьера', 'Пресса'],
+  services: [
+    'Гигиена',
+    'Отбеливание',
+    'Имплантация',
+    'Ортодонтия',
+    'Реставрация',
+  ],
+  doctors: ['Алексей Воронов', 'Марина Светлова', 'Дмитрий Ковалёв', 'Елена Брагина'],
+  contacts: [
+    'Москва, ул. Примерная, 12',
+    '+7 (495) 000-00-00',
+    'hello@karat.dental',
+  ],
+}
+
+export function Footer({ onBook }: FooterProps) {
+  return (
+    <footer
+      id="contacts"
+      className="relative overflow-hidden rounded-t-radius-card bg-ink pb-8 pt-16 text-text-inverse md:pt-24"
+    >
+      <div className="shell relative z-10">
+        <div className="mb-12 flex flex-col items-start justify-between gap-8 border-b border-white/10 pb-12 md:flex-row md:items-end">
+          <div>
+            <h2 className="font-display text-3xl font-medium tracking-tight md:text-4xl lg:text-5xl">
+              Запишитесь на приём
+            </h2>
+            <p className="mt-4 max-w-md text-text-inverse/60">
+              Оставьте заявку, и администратор свяжется с вами, чтобы подобрать
+              удобное время.
+            </p>
+          </div>
+          <PillButton variant="gold" onClick={onBook}>
+            Записаться
+          </PillButton>
+        </div>
+
+        <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-5">
+          <div className="lg:col-span-2">
+            <Logo className="text-text-inverse" />
+            <p className="mt-4 max-w-xs text-sm text-text-inverse/60">
+              Премиальная стоматология, где технологии и внимание к деталям
+              работают на вашу улыбку.
+            </p>
+          </div>
+          <FooterColumn title="О компании" items={links.company} />
+          <FooterColumn title="Услуги" items={links.services} />
+          <FooterColumn title="Контакты" items={links.contacts} />
+        </div>
+
+        <div className="mt-16 flex flex-col items-center justify-between gap-4 border-t border-white/10 pt-8 text-sm text-text-inverse/50 md:flex-row">
+          <p>© 2025 Karat Dental. Все права защищены.</p>
+          <div className="flex gap-6">
+            <a href="#" className="transition-colors hover:text-text-inverse">
+              Privacy
+            </a>
+            <a href="#" className="transition-colors hover:text-text-inverse">
+              Terms
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <ScrollReveal>
+        <div className="pointer-events-none absolute bottom-0 left-1/2 -translate-x-1/2 select-none font-display text-[18vw] font-semibold leading-none text-text-inverse/[0.03]">
+          KARAT
+        </div>
+      </ScrollReveal>
+    </footer>
+  )
+}
+
+function FooterColumn({ title, items }: { title: string; items: string[] }) {
+  return (
+    <div>
+      <h3 className="mb-4 text-xs font-medium uppercase tracking-wider text-text-inverse/40">
+        {title}
+      </h3>
+      <ul className="space-y-3">
+        {items.map((item) => (
+          <li key={item}>
+            <a
+              href="#"
+              className="text-sm text-text-inverse/70 transition-colors hover:text-text-inverse"
+            >
+              {item}
+            </a>
+          </li>
+        ))}
+      </ul>
+    </div>
+  )
+}

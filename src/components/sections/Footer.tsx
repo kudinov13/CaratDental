@@ -1,6 +1,9 @@
+import { MapPin } from 'lucide-react'
+import { Link } from 'react-router-dom'
 import { ScrollReveal } from '../ScrollReveal'
 import { PillButton } from '../PillButton'
 import { Logo } from '../Logo'
+import { useClinic } from '../../context/clinic'
 
 interface FooterProps {
   onBook: () => void
@@ -16,14 +19,10 @@ const links = {
     'Реставрация',
   ],
   doctors: ['Алексей Воронов', 'Марина Светлова', 'Дмитрий Ковалёв', 'Елена Брагина'],
-  contacts: [
-    'Москва, ул. Примерная, 12',
-    '+7 (495) 000-00-00',
-    'hello@karat.dental',
-  ],
 }
 
 export function Footer({ onBook }: FooterProps) {
+  const { branches } = useClinic()
   return (
     <footer
       id="contacts"
@@ -55,18 +54,40 @@ export function Footer({ onBook }: FooterProps) {
           </div>
           <FooterColumn title="О компании" items={links.company} />
           <FooterColumn title="Услуги" items={links.services} />
-          <FooterColumn title="Контакты" items={links.contacts} />
+          <div>
+            <h3 className="mb-4 text-xs font-medium uppercase tracking-wider text-text-inverse/40">
+              Филиалы
+            </h3>
+            <ul className="space-y-3">
+              {branches.map((b) => (
+                <li key={b.id}>
+                  <a
+                    href={b.mapUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="group flex items-start gap-2 text-sm text-text-inverse/70 transition-colors hover:text-text-inverse"
+                  >
+                    <MapPin size={14} aria-hidden="true" className="mt-0.5 shrink-0 text-accent-secondary-300" />
+                    <span>
+                      <span className="block">{b.address}</span>
+                      <span className="block text-xs text-text-inverse/45">{b.phone} · {b.hours}</span>
+                    </span>
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </div>
         </div>
 
         <div className="mt-16 flex flex-col items-center justify-between gap-4 border-t border-white/10 pt-8 text-sm text-text-inverse/50 md:flex-row">
           <p>© 2025 Karat Dental. Все права защищены.</p>
           <div className="flex gap-6">
-            <a href="#" className="transition-colors hover:text-text-inverse">
-              Privacy
-            </a>
-            <a href="#" className="transition-colors hover:text-text-inverse">
-              Terms
-            </a>
+            <Link to="/politika-konfidencialnosti" className="transition-colors hover:text-text-inverse">
+              Политика конфиденциальности
+            </Link>
+            <Link to="/kontakty" className="transition-colors hover:text-text-inverse">
+              Контакты
+            </Link>
           </div>
         </div>
       </div>

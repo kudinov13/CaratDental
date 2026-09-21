@@ -4,7 +4,7 @@ import { PillButton } from '../PillButton'
 
 export function About() {
   return (
-    <section id="about" className="relative bg-bg-primary py-24 md:py-32">
+    <section id="about" className="relative bg-bg-primary py-10 md:py-14">
       <div className="shell grid gap-12 lg:grid-cols-2 lg:gap-20">
         <div className="relative">
           <ScrollReveal>

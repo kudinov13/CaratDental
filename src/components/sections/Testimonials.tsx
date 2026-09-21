@@ -1,13 +1,14 @@
 import { ArrowRight, Star } from 'lucide-react'
+import { Link } from 'react-router-dom'
 
 export function Testimonials() {
   return (
     <section id="testimonials" className="h-full rounded-[1.75rem] bg-bg-secondary p-5 shadow-sm sm:p-7">
       <div className="mb-5 flex items-center justify-between gap-3">
         <h2 className="font-display text-2xl font-semibold text-ink">Отзывы пациентов</h2>
-        <button type="button" className="inline-flex cursor-pointer items-center gap-1 text-xs font-semibold text-text-secondary hover:text-ink">
+        <Link to="/otzyvy" className="inline-flex items-center gap-1 text-xs font-semibold text-text-secondary hover:text-ink">
           Все отзывы <ArrowRight size={14} aria-hidden="true" />
-        </button>
+        </Link>
       </div>
 
       <figure className="flex min-h-56 flex-col rounded-[1.15rem] border border-line bg-surface/75 p-5">

@@ -5,6 +5,8 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "server": "node server/index.js",
+    "dev:all": "concurrently -n web,api \"npm run dev\" \"npm run server\"",
     "build": "tsc -b && vite build",
     "lint": "oxlint",
     "preview": "vite preview"
@@ -16,6 +18,8 @@
     "@radix-ui/react-select": "^2.3.7",
     "@tailwindcss/vite": "^4.3.3",
     "clsx": "^2.1.1",
+    "concurrently": "^10.0.5",
+    "express": "^5.2.1",
     "ffmpeg-static": "^5.3.0",
     "framer-motion": "^12.42.2",
     "gsap": "^3.15.0",

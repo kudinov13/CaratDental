@@ -1,4 +1,5 @@
 import { ArrowRight } from 'lucide-react'
+import { Link } from 'react-router-dom'
 import { ScrollReveal } from '../ScrollReveal'
 
 function DentalMirror({ className }: { className?: string }) {
@@ -66,23 +67,23 @@ export function Services() {
       <div className="shell py-7 sm:py-9 lg:py-11">
         <div className="mb-6 flex items-center justify-between gap-4">
           <h2 className="font-display text-2xl font-semibold text-ink md:text-3xl">Наши услуги</h2>
-          <button type="button" className="inline-flex cursor-pointer items-center gap-2 text-sm font-semibold text-text-secondary transition-colors hover:text-ink">
+          <Link to="/uslugi" className="inline-flex items-center gap-2 text-sm font-semibold text-text-secondary transition-colors hover:text-ink">
             Смотреть все <ArrowRight size={16} aria-hidden="true" />
-          </button>
+          </Link>
         </div>
 
-        <div className="grid grid-cols-2 justify-center gap-4 md:grid-cols-3 lg:grid-cols-[repeat(5,12.5rem)]">
+        <div className="-mx-5 flex snap-x snap-mandatory gap-3 overflow-x-auto px-5 pb-2 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden md:mx-0 md:grid md:snap-none md:grid-cols-3 md:overflow-visible md:px-0 md:pb-0 lg:grid-cols-[repeat(5,12.5rem)] lg:justify-center lg:gap-4">
           {services.map(({ title, description, icon: Icon }, index) => (
-            <ScrollReveal key={title} delay={index * 0.04}>
+            <ScrollReveal key={title} delay={index * 0.04} className="w-[8.25rem] shrink-0 snap-start md:w-auto md:shrink">
               <button
                 type="button"
-                className="group flex min-h-[12.5rem] w-full cursor-pointer flex-col items-center justify-start rounded-2xl border border-[#D5CCB4] bg-[linear-gradient(to_bottom_right,transparent_55%,rgba(219,219,204,0.4)_100%),linear-gradient(170deg,#EDE9DE_0%,#E8E4D6_45%,#D6D4C4_80%,#D3D1C2_100%)] px-3 pb-6 pt-9 text-center transition-all duration-200 hover:-translate-y-1 hover:border-accent-secondary/70 hover:shadow-md sm:min-h-[13.5rem] lg:min-h-[14.5rem]"
+                className="group flex min-h-[10.5rem] w-full cursor-pointer flex-col items-center justify-start rounded-2xl border border-[#D5CCB4] bg-[linear-gradient(to_bottom_right,transparent_55%,rgba(219,219,204,0.4)_100%),linear-gradient(170deg,#EDE9DE_0%,#E8E4D6_45%,#D6D4C4_80%,#D3D1C2_100%)] px-2.5 pb-5 pt-6 text-center transition-all duration-200 hover:-translate-y-1 hover:border-accent-secondary/70 hover:shadow-md sm:min-h-[13.5rem] sm:px-3 sm:pt-9 lg:min-h-[14.5rem]"
               >
-                <span className="flex h-14 w-14 items-center justify-center">
-                  <Icon className="h-12 w-12 text-accent-primary-700 transition-transform duration-200 group-hover:scale-110" />
+                <span className="flex h-12 w-12 items-center justify-center sm:h-14 sm:w-14">
+                  <Icon className="h-10 w-10 text-accent-primary-700 transition-transform duration-200 group-hover:scale-110 sm:h-12 sm:w-12" />
                 </span>
-                <strong className="mt-6 font-display text-base text-ink">{title}</strong>
-                <span className="mt-1.5 text-xs leading-snug text-text-muted">{description}</span>
+                <strong className="mt-4 font-display text-sm text-ink sm:mt-6 sm:text-base">{title}</strong>
+                <span className="mt-1.5 text-[11px] leading-snug text-text-muted sm:text-xs">{description}</span>
               </button>
             </ScrollReveal>
           ))}

@@ -22,3 +22,9 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Database
+server/*.db
+server/*.db-wal
+server/*.db-shm
+server/.env

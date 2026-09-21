@@ -26,7 +26,7 @@ const tech = [
 
 export function Technology() {
   return (
-    <section id="technology" className="relative overflow-hidden bg-bg-secondary py-24 md:py-32">
+    <section id="technology" className="relative z-20 -mt-6 rounded-t-[1.75rem] bg-bg-secondary py-10 lg:-mt-9 lg:rounded-t-[2.5rem] md:py-14">
       <div className="shell relative z-10">
         <div className="grid items-center gap-12 lg:grid-cols-2">
           <div>

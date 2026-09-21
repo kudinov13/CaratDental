@@ -35,16 +35,16 @@ function ToothMark({ className, size }: { className?: string; size?: number }) {
 }
 
 const benefits = [
-  { icon: LeafMark, title: 'Без боли', text: 'Бережное лечение' },
-  { icon: ToothMark, iconSize: 22, title: 'Современное оборудование', text: 'Точная диагностика' },
-  { icon: UserRound, title: 'Индивидуальный подход', text: 'Забота на каждом этапе' },
+  { icon: LeafMark, iconClass: 'h-4 w-4 sm:h-[18px] sm:w-[18px]', title: 'Без боли', text: 'Бережное лечение' },
+  { icon: ToothMark, iconSize: 22, iconClass: 'h-[18px] w-[18px] sm:h-[22px] sm:w-[22px]', title: 'Современное оборудование', text: 'Точная диагностика' },
+  { icon: UserRound, iconClass: 'h-4 w-4 sm:h-[18px] sm:w-[18px]', title: 'Индивидуальный подход', text: 'Забота на каждом этапе' },
 ]
 
 export function Hero({ onBook }: HeroProps) {
   const lenis = useLenis()
 
   return (
-    <section id="home" className="relative min-h-[100dvh] overflow-hidden bg-[linear-gradient(160deg,#F5F1E8_0%,#EFEADB_50%,#E5DFCC_100%)] pt-[72px] lg:pt-20">
+    <section id="home" className="relative min-h-[82dvh] overflow-hidden bg-[linear-gradient(160deg,#F5F1E8_0%,#EFEADB_50%,#E5DFCC_100%)] pt-[72px] lg:min-h-[100dvh] lg:pt-20">
       {/* Media background */}
       <div className="absolute inset-0 opacity-70" aria-hidden="true">
         <div className="absolute -left-24 top-24 h-72 w-72 rounded-full bg-accent-secondary-300/25 blur-3xl" />
@@ -53,14 +53,14 @@ export function Hero({ onBook }: HeroProps) {
 
       {/* Interactive before/after layer */}
       <div className="relative z-10">
-        <div className="relative grid min-h-[calc(100dvh-80px)] overflow-hidden lg:grid-cols-[1.02fr_0.98fr]">
+        <div className="relative grid min-h-[calc(82dvh-72px)] overflow-hidden lg:min-h-[calc(100dvh-80px)] lg:grid-cols-[1.02fr_0.98fr]">
           {/* Watermark */}
-          <div className="relative z-30 flex flex-col justify-end px-6 pb-40 pt-12 sm:px-10 sm:pb-42 lg:px-14 lg:pb-44 xl:px-16">
+          <div className="relative z-30 flex flex-col justify-end px-4 pb-36 pt-12 sm:px-10 sm:pb-42 lg:px-14 lg:pb-44 xl:px-16">
             <motion.h1
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.65, delay: 0.05 }}
-              className="max-w-xl font-display text-[clamp(1.75rem,3.2vw,3.6rem)] font-semibold leading-[1.06] tracking-[-0.045em] text-ink"
+              className="max-w-[60%] font-display text-[clamp(1.75rem,3.2vw,3.6rem)] font-semibold leading-[1.06] tracking-[-0.045em] text-ink sm:max-w-xl"
             >
               Улыбка, которая меняет впечатление о себе
             </motion.h1>
@@ -68,7 +68,7 @@ export function Hero({ onBook }: HeroProps) {
               initial={{ opacity: 0, y: 16 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.55, delay: 0.12 }}
-              className="mt-6 max-w-[42ch] text-base leading-relaxed text-text-secondary md:text-lg"
+              className="mt-4 max-w-[58%] text-sm leading-relaxed text-text-secondary sm:mt-6 sm:max-w-[42ch] sm:text-base md:text-lg"
             >
               Современная стоматология для здоровья, уверенности и красоты вашей улыбки.
             </motion.p>
@@ -77,14 +77,14 @@ export function Hero({ onBook }: HeroProps) {
               initial={{ opacity: 0, y: 16 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.55, delay: 0.18 }}
-              className="mt-8 flex flex-wrap gap-3"
+              className="mt-6 flex flex-nowrap gap-2 sm:mt-8 sm:gap-3"
             >
               <button
                 type="button"
                 onClick={onBook}
-                className="inline-flex min-h-[3.75rem] cursor-pointer items-center gap-2.5 rounded-[1.15rem] bg-accent-primary px-10 text-base font-semibold text-text-inverse shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:bg-accent-primary-700 hover:shadow-md"
+                className="inline-flex min-h-11 cursor-pointer items-center gap-1.5 rounded-[1.15rem] bg-accent-primary px-4 text-[13px] font-semibold text-text-inverse shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:bg-accent-primary-700 hover:shadow-md sm:min-h-[3.75rem] sm:gap-2.5 sm:px-10 sm:text-base"
               >
-                <LeafMark className="h-6 w-6 text-accent-secondary-300" />
+                <LeafMark className="h-4 w-4 text-accent-secondary-300 sm:h-6 sm:w-6" />
                 Записаться
               </button>
               <button
@@ -93,7 +93,7 @@ export function Hero({ onBook }: HeroProps) {
                   const el = document.getElementById('services')
                   if (el) lenis?.scrollTo(el, { offset: -84 })
                 }}
-                className="min-h-[3.75rem] cursor-pointer rounded-[1.15rem] border border-accent-primary/40 bg-surface/65 px-10 text-base font-semibold text-ink transition-colors hover:bg-surface"
+                className="min-h-11 cursor-pointer rounded-[1.15rem] border border-accent-primary/40 bg-surface/65 px-4 text-[13px] font-semibold text-ink transition-colors hover:bg-surface sm:min-h-[3.75rem] sm:px-10 sm:text-base"
               >
                 Наши услуги
               </button>
@@ -103,32 +103,31 @@ export function Hero({ onBook }: HeroProps) {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ duration: 0.6, delay: 0.25 }}
-              className="relative mt-6 flex w-fit items-center rounded-[1.25rem] border border-accent-primary-700/60 bg-[linear-gradient(to_right,transparent_0%,transparent_55%,rgba(255,255,255,0.55)_80%,rgba(255,255,255,0.85)_100%)] px-5 py-3 shadow-sm backdrop-blur-md"
+              className="relative mt-6 flex w-fit items-center rounded-[1.25rem] border border-accent-primary-700/60 bg-[linear-gradient(to_right,transparent_0%,transparent_55%,rgba(255,255,255,0.55)_80%,rgba(255,255,255,0.85)_100%)] px-3 py-2 shadow-sm backdrop-blur-md sm:px-5 sm:py-3"
             >
-              <div className="flex items-center gap-2.5">
-                <Star className="h-7 w-7 fill-accent-secondary text-accent-secondary" aria-hidden="true" />
-                <strong className="font-display text-3xl text-ink">4.9</strong>
+              <div className="flex items-center gap-2 sm:gap-2.5">
+                <Star className="h-5 w-5 fill-accent-secondary text-accent-secondary sm:h-7 sm:w-7" aria-hidden="true" />
+                <strong className="font-display text-2xl text-ink sm:text-3xl">4.9</strong>
               </div>
-              <span className="mx-5 h-7 w-px bg-line-strong/70" aria-hidden="true" />
-              <div className="flex items-center gap-2.5">
-                <strong className="font-display text-3xl text-ink">200+</strong>
-                <span className="max-w-20 text-[11px] leading-tight text-text-secondary">довольных пациентов</span>
+              <span className="mx-3 h-6 w-px bg-line-strong/70 sm:mx-5 sm:h-7" aria-hidden="true" />
+              <div className="flex items-center gap-2 sm:gap-2.5">
+                <strong className="font-display text-2xl text-ink sm:text-3xl">200+</strong>
+                <span className="max-w-20 text-[10px] leading-tight text-text-secondary sm:text-[11px]">довольных пациентов</span>
               </div>
             </motion.div>
           </div>
 
           {/* Content */}
-          <div className="relative z-0 min-h-[470px] overflow-hidden lg:min-h-full">
-            <video
-              autoPlay
-              muted
-              loop
-              playsInline
-              className="absolute inset-0 h-full w-full object-cover object-[56%_center]"
-            >
-              <source src="/videos/hero-loop.mp4" type="video/mp4" />
-            </video>
-            <div className="absolute inset-0 bg-gradient-to-t from-accent-primary-700/25 via-transparent to-bg-secondary/10" />
+          <div className="absolute inset-0 z-0 overflow-hidden">
+            <picture>
+              <source media="(min-width: 1024px)" srcSet="/images/Hero_One.jpg" />
+              <img
+                src="/images/Hero-mobile.jpg"
+                alt="Врач клиники KARAT"
+                className="absolute inset-0 h-full w-full object-cover object-[right_bottom] lg:object-[78%_center]"
+              />
+            </picture>
+            <div className="absolute inset-0 bg-gradient-to-t from-accent-primary-700/20 via-transparent to-bg-secondary/10" />
           </div>
 
           <div
@@ -140,14 +139,14 @@ export function Hero({ onBook }: HeroProps) {
             aria-hidden="true"
           />
 
-          <div className="absolute bottom-7 left-6 right-6 z-30 grid grid-cols-3 gap-1 rounded-[1.25rem] bg-[linear-gradient(95deg,#073F39_0%,#0D5A50_50%,#2F8271_100%)] p-2.5 pl-4 text-text-inverse shadow-lg backdrop-blur-md sm:bottom-8 sm:left-10 sm:right-10 sm:gap-2 sm:p-4 sm:pl-6 lg:bottom-12 lg:left-14 lg:right-auto lg:w-[46%] xl:left-16 xl:w-[44%]">
-            {benefits.map(({ icon: Icon, iconSize, title, text }) => (
-              <div key={title} className="flex flex-col items-center gap-1.5 rounded-xl px-1 py-1.5 text-center sm:flex-row sm:gap-3 sm:border-r sm:border-white/15 sm:px-2 sm:py-2 sm:text-left sm:last:border-0">
-                <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-accent-secondary/70 text-accent-secondary-300 sm:h-10 sm:w-10">
-                  <Icon size={iconSize ?? 18} aria-hidden="true" />
+          <div className="absolute bottom-5 left-4 right-4 z-30 grid grid-cols-3 gap-1 rounded-[1.1rem] bg-[linear-gradient(95deg,#073F39_0%,#0D5A50_50%,#2F8271_100%)] px-3 py-2 text-text-inverse shadow-lg backdrop-blur-md sm:bottom-8 sm:left-10 sm:right-10 sm:gap-2 sm:p-4 sm:pl-6 lg:bottom-12 lg:left-14 lg:right-auto lg:w-[46%] xl:left-16 xl:w-[44%]">
+            {benefits.map(({ icon: Icon, iconSize, iconClass, title, text }) => (
+              <div key={title} className="flex items-center justify-center gap-1.5 rounded-xl px-1 py-1 sm:flex-row sm:gap-3 sm:border-r sm:border-white/15 sm:px-2 sm:py-2 sm:text-left sm:last:border-0">
+                <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full border border-accent-secondary/70 text-accent-secondary-300 sm:h-10 sm:w-10">
+                  <Icon size={iconSize ?? 18} className={iconClass} aria-hidden="true" />
                 </span>
                 <span>
-                  <strong className="block text-[10px] font-semibold leading-tight sm:text-xs md:text-sm">{title}</strong>
+                  <strong className="block text-[9px] font-semibold leading-tight sm:text-xs md:text-sm">{title}</strong>
                   <span className="mt-0.5 hidden text-[10px] text-white/60 xl:block">{text}</span>
                 </span>
               </div>

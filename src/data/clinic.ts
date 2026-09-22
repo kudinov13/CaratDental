@@ -28,90 +28,34 @@ export interface Doctor {
 export const branches: Branch[] = [
   {
     id: 'm7a',
-    name: 'Филиал на 7а микрорайоне',
+    name: 'Карат',
     shortName: '7а мкр.',
     address: 'Тобольск, мкр. 7а, д. 7а, 1 этаж',
     phone: '+7 (912) 388-78-12',
-    hours: 'Пн–Пт 9:00–20:00, Сб 10:00–18:00',
+    hours: '9:00–21:00, по предварительной записи',
     mapUrl: 'https://2gis.ru/tobolsk/geo/70000001046770706',
   },
   {
     id: 'm9',
-    name: 'Филиал на 9 микрорайоне',
+    name: 'Карат',
     shortName: '9-й мкр.',
     address: 'Тобольск, 9-й мкр., д. 11',
     phone: '+7 (982) 971-81-97',
-    hours: 'Пн–Пт 9:00–20:00, Сб 10:00–18:00',
+    hours: '9:00–21:00, по предварительной записи',
     mapUrl: 'https://2gis.ru/tobolsk/geo/70000001087488201',
   },
   {
     id: 'm15',
-    name: 'Детская стоматология на 15 микрорайоне',
+    name: 'Карат',
     shortName: '15-й мкр. (детская)',
     address: 'Тобольск, 15-й мкр., д. 18',
     phone: '+7 (922) 268-80-09',
-    hours: 'Ежедневно до 21:00',
+    hours: '9:00–21:00, по предварительной записи',
     mapUrl: 'https://2gis.ru/tobolsk/geo/70000001110932596',
   },
 ]
 
-export const doctors: Doctor[] = [
-  {
-    id: 'green',
-    name: 'Мари Грин',
-    role: 'Стоматолог-терапевт, ортопед',
-    photo: '/images/doctors/Karina.jpg',
-    imgClass: 'scale-[1.35]',
-    chief: true,
-    branchIds: ['m7a', 'm9'],
-    services: [
-      { name: 'Первичный приём', price: 300, durationMin: 30 },
-      { name: 'Приём ортопеда', price: 600, durationMin: 30 },
-      { name: 'Лечение кариеса', price: 2100, durationMin: 60 },
-      { name: 'Профессиональная чистка', price: 4900, durationMin: 60 },
-    ],
-  },
-  {
-    id: 'amonatzoda',
-    name: 'Амонатзода С. Р.',
-    role: 'Стоматолог-терапевт',
-    photo: '/images/doctors/Amonatzoda.jpg',
-    branchIds: ['m7a'],
-    services: [
-      { name: 'Первичный приём', price: 300, durationMin: 30 },
-      { name: 'Лечение кариеса', price: 2100, durationMin: 60 },
-      { name: 'Лечение каналов', price: 3500, durationMin: 90 },
-      { name: 'Эстетическая реставрация', price: 4000, durationMin: 90 },
-    ],
-  },
-  {
-    id: 'irisbekov',
-    name: 'Ырысбеков Э. Н.',
-    role: 'Терапевт, хирург, ортопед',
-    photo: '/images/doctors/Irisbekov.jpg',
-    branchIds: ['m9', 'm15'],
-    services: [
-      { name: 'Первичный приём', price: 300, durationMin: 30 },
-      { name: 'Удаление зуба', price: 2000, durationMin: 40 },
-      { name: 'Имплантация', price: 25000, durationMin: 90 },
-      { name: 'Протезирование', price: 15000, durationMin: 90 },
-    ],
-  },
-  {
-    id: 'rabadanov',
-    name: 'Рабаданов Б. Р.',
-    role: 'Стоматолог-терапевт',
-    photo: '/images/doctors/Rabadanov.jpg',
-    imgClass: 'scale-[1.8]',
-    branchIds: ['m15'],
-    services: [
-      { name: 'Первичный приём', price: 300, durationMin: 30 },
-      { name: 'Приём ортодонта', price: 500, durationMin: 30 },
-      { name: 'Лечение кариеса', price: 2100, durationMin: 60 },
-      { name: 'Профессиональная чистка', price: 4500, durationMin: 60 },
-    ],
-  },
-]
+export { doctors } from './doctors'
 
 // --- Расписание (заглушка до интеграции с МИС SQNS) ---
 

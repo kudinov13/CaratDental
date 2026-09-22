@@ -1,13 +1,48 @@
+import 'dotenv/config'
 import express from 'express'
 import crypto from 'node:crypto'
+import helmet from 'helmet'
+import rateLimit from 'express-rate-limit'
 import db from './db.js'
 
 const app = express()
-app.use(express.json())
+app.use(helmet())
+app.use(express.json({ limit: '32kb' }))
+
+// ---------- Security / Rate limits ----------
+
+const apiLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 100,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { error: 'Слишком много запросов. Попробуйте позже.' },
+})
+
+const bookingLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 10,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { error: 'Слишком много попыток записи. Попробуйте позже.' },
+})
+
+const loginLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 5,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { error: 'Слишком много попыток входа. Попробуйте позже.' },
+})
+
+app.use('/api/', apiLimiter)
 
 // ---------- Auth ----------
 
 const SECRET = process.env.KARAT_SECRET || 'karat-dev-secret-change-me'
+if (!process.env.KARAT_SECRET) {
+  console.warn('[WARN] KARAT_SECRET не задан. Используется небезопасный dev-секрет. Укажите KARAT_SECRET перед запуском в production.')
+}
 const tokens = new Map() // token -> { login, exp }
 
 function signToken(login) {
@@ -32,10 +67,15 @@ function auth(req, res, next) {
   next()
 }
 
-app.post('/api/login', (req, res) => {
+app.post('/api/login', loginLimiter, (req, res) => {
   const { login, password } = req.body || {}
-  const row = db.prepare('SELECT * FROM admins WHERE login = ?').get(String(login || ''))
-  const ok = row && crypto.scryptSync(String(password || ''), row.salt, 64).toString('hex') === row.pass_hash
+  const cleanLogin = String(login || '').trim().slice(0, 50)
+  const cleanPassword = String(password || '').slice(0, 100)
+  if (!cleanLogin || !cleanPassword) {
+    return res.status(400).json({ error: 'Логин и пароль обязательны' })
+  }
+  const row = db.prepare('SELECT * FROM admins WHERE login = ?').get(cleanLogin)
+  const ok = row && crypto.scryptSync(cleanPassword, row.salt, 64).toString('hex') === row.pass_hash
   if (!ok) return res.status(401).json({ error: 'Неверный логин или пароль' })
   const token = signToken(row.login)
   tokens.set(token, { login: row.login })
@@ -107,10 +147,33 @@ app.get('/api/slots', (req, res) => {
   res.json({ slots })
 })
 
-app.post('/api/bookings', (req, res) => {
-  const { branchId, doctorId, service, date, time, name, phone, comment } = req.body || {}
+function cleanBookingInput(body) {
+  const str = (v, max) => String(v ?? '').trim().slice(0, max)
+  return {
+    branchId: str(body.branchId, 32),
+    doctorId: str(body.doctorId, 32),
+    service: str(body.service, 200),
+    date: str(body.date, 10),
+    time: str(body.time, 5),
+    name: str(body.name, 100),
+    phone: str(body.phone, 30),
+    comment: str(body.comment, 500),
+  }
+}
+
+const dateRe = /^\d{4}-\d{2}-\d{2}$/
+const timeRe = /^([01]\d|2[0-3]):([0-5]\d)$/
+
+app.post('/api/bookings', bookingLimiter, (req, res) => {
+  const { branchId, doctorId, service, date, time, name, phone, comment } = cleanBookingInput(req.body || {})
   if (!branchId || !doctorId || !date || !time || !name || !phone)
     return res.status(400).json({ error: 'Заполните обязательные поля' })
+  if (!dateRe.test(date)) return res.status(400).json({ error: 'Некорректная дата' })
+  if (!timeRe.test(time)) return res.status(400).json({ error: 'Некорректное время' })
+
+  const branch = db.prepare('SELECT id FROM branches WHERE id = ?').get(branchId)
+  const doctor = db.prepare('SELECT id FROM doctors WHERE id = ?').get(doctorId)
+  if (!branch || !doctor) return res.status(400).json({ error: 'Неверный филиал или врач' })
 
   const clash = db.prepare(
     "SELECT id FROM bookings WHERE doctor_id = ? AND date = ? AND time = ? AND status != 'cancelled'"
@@ -119,7 +182,7 @@ app.post('/api/bookings', (req, res) => {
 
   const info = db.prepare(
     'INSERT INTO bookings (branch_id, doctor_id, service, date, time, name, phone, comment) VALUES (?,?,?,?,?,?,?,?)'
-  ).run(branchId, doctorId, service || '', date, time, name, phone, comment || '')
+  ).run(branchId, doctorId, service, date, time, name, phone, comment)
 
   res.json({ ok: true, id: info.lastInsertRowid })
 })

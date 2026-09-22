@@ -44,15 +44,23 @@ export function About() {
           <ScrollReveal delay={0.3}>
             <div className="mt-10 flex flex-wrap items-center gap-3">
               <a
-                href="https://instagram.com"
+                href="https://vk.com/karattobolsk"
                 target="_blank"
                 rel="noreferrer"
                 className="inline-flex items-center gap-2 rounded-radius-pill border border-line bg-bg-secondary px-4 py-2 text-sm text-ink transition-colors hover:border-ink"
               >
-                Instagram
+                VKontakte
               </a>
               <a
-                href="https://wa.me"
+                href="https://t.me/+79123887812"
+                target="_blank"
+                rel="noreferrer"
+                className="inline-flex items-center gap-2 rounded-radius-pill border border-line bg-bg-secondary px-4 py-2 text-sm text-ink transition-colors hover:border-ink"
+              >
+                Telegram
+              </a>
+              <a
+                href="https://wa.me/79829718197"
                 target="_blank"
                 rel="noreferrer"
                 className="inline-flex items-center gap-2 rounded-radius-pill border border-line bg-bg-secondary px-4 py-2 text-sm text-ink transition-colors hover:border-ink"
@@ -60,12 +68,18 @@ export function About() {
                 WhatsApp
               </a>
               <a
-                href="https://t.me"
+                href="https://max.ru/id7206060623_bot"
                 target="_blank"
                 rel="noreferrer"
                 className="inline-flex items-center gap-2 rounded-radius-pill border border-line bg-bg-secondary px-4 py-2 text-sm text-ink transition-colors hover:border-ink"
               >
-                Telegram
+                Max
+              </a>
+              <a
+                href="mailto:karattob@gmail.com"
+                className="inline-flex items-center gap-2 rounded-radius-pill border border-line bg-bg-secondary px-4 py-2 text-sm text-ink transition-colors hover:border-ink"
+              >
+                karattob@gmail.com
               </a>
             </div>
             <div className="mt-8">

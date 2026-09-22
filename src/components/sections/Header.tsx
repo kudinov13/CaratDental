@@ -15,6 +15,7 @@ const navLinks = [
   { label: 'Результаты', href: '#cases' },
   { label: 'Цены', href: '#prices' },
   { label: 'Отзывы', href: '#testimonials' },
+  { label: 'Вопросы', href: '#faq' },
   { label: 'Контакты', href: '#contacts' },
 ]
 
@@ -94,11 +95,11 @@ export function Header({ onBook }: HeaderProps) {
               <span className="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 text-[9px] text-text-muted">▼</span>
             </div>
             <a
-              href="tel:+79990000000"
+              href="tel:+79123887812"
               className="inline-flex items-center gap-2 text-sm font-semibold text-ink transition-colors hover:text-accent-primary"
             >
               <Phone size={16} aria-hidden="true" />
-              +7 (999) 000-00-00
+              +7 (912) 388-78-12
             </a>
             <button
               type="button"

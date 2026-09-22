@@ -1,4 +1,4 @@
-# Karat Dental
+# Karat3
 
 Премиальный лендинг стоматологической клиники. React 19 + TypeScript + Vite + Tailwind CSS v4 + Framer Motion + GSAP + Lenis.
 

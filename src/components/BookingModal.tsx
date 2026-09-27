@@ -67,7 +67,7 @@ export function BookingModal({ open, onOpenChange }: BookingModalProps) {
       return
     }
     let cancelled = false
-    fetch(`/api/slots?doctor=${doctorId}&date=${date}`)
+    fetch(`/api/slots?doctor=${doctorId}&date=${date}${service ? `&service=${encodeURIComponent(service)}` : ''}`)
       .then((r) => (r.ok ? r.json() : Promise.reject()))
       .then((json) => {
         if (!cancelled) setSlots(json.slots ?? [])
@@ -78,7 +78,7 @@ export function BookingModal({ open, onOpenChange }: BookingModalProps) {
     return () => {
       cancelled = true
     }
-  }, [doctorId, date])
+  }, [doctorId, date, service])
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()

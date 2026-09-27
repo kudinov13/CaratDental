@@ -299,6 +299,7 @@ function DoctorsTab({ token }: { token: string }) {
               <input value={edit.name} onChange={(e) => setEdit({ ...edit, name: e.target.value })} placeholder="ФИО" className={miniInput + ' w-full'} />
               <input value={edit.role} onChange={(e) => setEdit({ ...edit, role: e.target.value })} placeholder="Специализация" className={miniInput + ' w-full'} />
               <input value={edit.photo} onChange={(e) => setEdit({ ...edit, photo: e.target.value })} placeholder="Фото (/images/doctors/...)" className={miniInput + ' w-full'} />
+              <input value={edit.sqnsEmployeeId ?? ''} onChange={(e) => setEdit({ ...edit, sqnsEmployeeId: e.target.value })} placeholder="ID врача в SQNS (employeeId)" className={miniInput + ' w-full'} />
               <label className="flex items-center gap-2 text-sm"><input type="checkbox" checked={!!edit.chief} onChange={(e) => setEdit({ ...edit, chief: e.target.checked })} className="accent-accent-primary" /> Главный врач</label>
 
               <div>
@@ -325,6 +326,7 @@ function DoctorsTab({ token }: { token: string }) {
                     <input value={s.name} onChange={(e) => { const ss = [...edit.services]; ss[i] = { ...s, name: e.target.value }; setEdit({ ...edit, services: ss }) }} placeholder="Услуга" className={miniInput + ' flex-1'} />
                     <input value={s.price} type="number" onChange={(e) => { const ss = [...edit.services]; ss[i] = { ...s, price: Number(e.target.value) }; setEdit({ ...edit, services: ss }) }} placeholder="₽" className={miniInput + ' w-20'} />
                     <input value={s.durationMin} type="number" onChange={(e) => { const ss = [...edit.services]; ss[i] = { ...s, durationMin: Number(e.target.value) }; setEdit({ ...edit, services: ss }) }} placeholder="мин" className={miniInput + ' w-16'} />
+                    <input value={s.sqnsServiceId ?? ''} onChange={(e) => { const ss = [...edit.services]; ss[i] = { ...s, sqnsServiceId: e.target.value || undefined }; setEdit({ ...edit, services: ss }) }} placeholder="SQNS id" className={miniInput + ' w-20'} />
                   </div>
                 ))}
                 <button type="button" onClick={() => setEdit({ ...edit, services: [...edit.services, { name: '', price: 0, durationMin: 30 }] })} className="cursor-pointer text-xs font-semibold text-accent-primary hover:underline">

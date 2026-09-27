@@ -57,7 +57,7 @@ export function PricesPage() {
         return { ...cat, services }
       })
       .filter((cat) => cat.services.length > 0)
-  }, [priceCategories, query, serviceDoctors, doctorId, doctors, effectiveBranch, availableDoctors])
+  }, [query, serviceDoctors, doctorId, doctors, effectiveBranch, availableDoctors])
 
   return (
     <main id="main-content" className="bg-bg-primary pt-[72px] lg:pt-20">

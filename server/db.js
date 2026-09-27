@@ -81,6 +81,12 @@ CREATE TABLE IF NOT EXISTS settings (
 );
 `)
 
+// Миграции для существующей БД
+const cols = (table) => db.prepare(`PRAGMA table_info(${table})`).all().map((c) => c.name)
+if (!cols('doctors').includes('sqns_employee_id')) db.exec('ALTER TABLE doctors ADD COLUMN sqns_employee_id TEXT')
+if (!cols('services').includes('sqns_service_id')) db.exec('ALTER TABLE services ADD COLUMN sqns_service_id TEXT')
+if (!cols('bookings').includes('sqns_visit_id')) db.exec('ALTER TABLE bookings ADD COLUMN sqns_visit_id TEXT')
+
 const count = db.prepare('SELECT COUNT(*) AS c FROM branches').get().c
 
 if (count === 0) {

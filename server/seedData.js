@@ -123,7 +123,7 @@ export const seedDoctors = [
     id: 'konovalova',
     name: 'Коновалова Ксения Ильинична',
     role: 'Взрослый и детский ортодонт',
-    photo: '/images/doctors/doctor-1.svg',
+    photo: '/images/doctors/Konovalova.jpg',
     chief: false,
     branchIds: ['m15'],
     services: [
@@ -161,7 +161,7 @@ export const seedDoctors = [
     id: 'suhanova',
     name: 'Суханова Марина Николаевна',
     role: 'Детский и взрослый терапевт, ортопед, имплантолог, детский хирург',
-    photo: '/images/doctors/Karina.jpg',
+    photo: '/images/doctors/Sukhanova.jpg',
     chief: true,
     branchIds: ['m15'],
     services: [
@@ -243,7 +243,7 @@ export const seedDoctors = [
     id: 'sukhorukova',
     name: 'Сухорукова Регина Рафисовна',
     role: 'Детский терапевт',
-    photo: '/images/doctors/doctor-3.svg',
+    photo: '/images/doctors/Sukhorukova.jpg',
     chief: false,
     branchIds: ['m15'],
     services: [

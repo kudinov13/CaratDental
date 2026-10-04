@@ -1,11 +1,14 @@
 import 'dotenv/config'
 import express from 'express'
 import crypto from 'node:crypto'
+import { fileURLToPath } from 'node:url'
+import { dirname, join } from 'node:path'
 import helmet from 'helmet'
 import rateLimit from 'express-rate-limit'
 import db from './db.js'
 import * as sqns from './sqns.js'
 
+const __dirname = dirname(fileURLToPath(import.meta.url))
 const app = express()
 app.use(helmet())
 app.use(express.json({ limit: '32kb' }))
@@ -391,6 +394,15 @@ app.get('/api/admin/stats', auth, (req, res) => {
     'SELECT br.short_name AS name, COUNT(*) AS c FROM bookings b LEFT JOIN branches br ON br.id=b.branch_id GROUP BY b.branch_id'
   ).all()
   res.json({ total, byStatus, byDoctor, byBranch })
+})
+
+// ---------- Static SPA ----------
+
+const distDir = join(__dirname, '..', 'dist')
+app.use(express.static(distDir))
+app.use((req, res, next) => {
+  if (req.method !== 'GET' || req.path.startsWith('/api/')) return next()
+  res.sendFile(join(distDir, 'index.html'), (err) => { if (err) next() })
 })
 
 const PORT = process.env.PORT || 3001

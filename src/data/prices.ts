@@ -1,6 +1,7 @@
 export interface PriceService {
   name: string
   price: number
+  priceLabel?: string
   durationMin: number
 }
 
@@ -30,12 +31,17 @@ export const priceCategories: PriceCategory[] = [
       { name: "Межчелюстная тяга", price: 900, durationMin: 60 },
       { name: "Фиксация кнопки", price: 850, durationMin: 60 },
       { name: "Повторная фиксация брекета", price: 2000, durationMin: 60 },
-      { name: "Установка ретейнера:", price: 13700, durationMin: 60 },
+      { name: "Снятие брекет-системы (одна челюсть, ретейнер включен)", price: 17700, durationMin: 60 },
+      { name: "Снятие брекет-системы (две челюсти, ретейнер включен)", price: 35400, durationMin: 90 },
+      { name: "Установка ретейнера (одна челюсть)", price: 13700, durationMin: 60 },
+      { name: "Установка ретейнера (один зуб)", price: 1200, durationMin: 30 },
+      { name: "Снятие ретейнера (один зуб)", price: 550, durationMin: 30 },
       { name: "Ретенционная каппа", price: 15000, durationMin: 60 },
-      { name: "Сдача ретенционной каппы,", price: 650, durationMin: 60 },
+      { name: "Сдача ретенционной каппы / съемного аппарата", price: 650, durationMin: 30 },
       { name: "Окклюзионная накладка", price: 2000, durationMin: 60 },
       { name: "Аппарат съемный с расширяющим винтом", price: 37000, durationMin: 60 },
-      { name: "Активация пластинки:", price: 1500, durationMin: 60 },
+      { name: "Активация пластинки (коррекция)", price: 1500, durationMin: 60 },
+      { name: "Починка пластинки", price: 0, priceLabel: "индивидуально", durationMin: 30 },
       { name: "Раскрытие ретенированного зуба", price: 10000, durationMin: 60 },
     ],
   },
@@ -105,14 +111,14 @@ export const priceCategories: PriceCategory[] = [
       { name: "Удаление зуба мудрости", price: 10000, durationMin: 40 },
       { name: "Сложное удаление первого/второго моляра", price: 8000, durationMin: 40 },
       { name: "Удаление первого/второго моляра", price: 6000, durationMin: 40 },
-      { name: "Сложное удаление резцов, клыков, первого/второго примоляра", price: 8000, durationMin: 40 },
+      { name: "Сложное удаление резцов, клыков, первого/второго примоляра", price: 6000, durationMin: 40 },
       { name: "Удаление резцов, клыков, первого/второго примоляра", price: 6000, durationMin: 40 },
       { name: "Удаление подвижного зуба", price: 4000, durationMin: 40 },
-      { name: "Лечение перекоронтита", price: 3000, durationMin: 60 },
-      { name: "Коагуляция десны", price: 3000, durationMin: 60 },
+      { name: "Лечение перикоронтита", price: 3500, durationMin: 60 },
+      { name: "Коагуляция десны", price: 3500, durationMin: 60 },
       { name: "Вскрытие подслизистого/поднадкостничного очага воспаления", price: 3000, durationMin: 60 },
       { name: "Вскрытие и дренирование одонтогенного абсцесса", price: 3000, durationMin: 60 },
-      { name: "Отсроченный кюретаж лунки ранее удаленного зуба", price: 2500, durationMin: 60 },
+      { name: "Отсроченный кюретаж лунки ранее удаленного зуба", price: 3500, durationMin: 60 },
     ],
   },
   {

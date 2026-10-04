@@ -63,7 +63,7 @@ export function PageLoader({ onDone }: { onDone?: () => void }) {
       }}
     >
       <div className="flex flex-col items-center gap-6">
-        <div className="font-display text-3xl font-semibold tracking-tight">KARAT</div>
+        <div className="font-display text-3xl font-semibold tracking-tight">KARAT TITAN</div>
         <p className="text-sm text-text-muted">Искусство заботы о вашей улыбке</p>
         <div className="font-sans text-2xl tabular-nums tracking-widest">
           <motion.span>{display}</motion.span>

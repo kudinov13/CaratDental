@@ -394,4 +394,4 @@ app.get('/api/admin/stats', auth, (req, res) => {
 })
 
 const PORT = process.env.PORT || 3001
-app.listen(PORT, () => console.log(`KARAT API → http://localhost:${PORT}`))
+app.listen(PORT, () => console.log(`KARAT TITAN API → http://localhost:${PORT}`))

@@ -33,7 +33,7 @@ export function About() {
           </WordReveal>
           <ScrollReveal delay={0.2}>
             <p className="mt-8 max-w-xl text-base leading-relaxed text-text-muted md:text-lg">
-              Karat Dental объединяет опытных врачей, цифровую диагностику и
+              Karat Titan объединяет опытных врачей, цифровую диагностику и
               внимание к деталям. Мы не лечим зубы по шаблону: каждый план
               разрабатывается под ваши ощущения, образ жизни и ожидания. От
               профгигиены до сложной реставрации — всё в одном пространстве, где

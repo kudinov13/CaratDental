@@ -51,7 +51,7 @@ export function ChatBot({ onBook }: ChatBotProps) {
   const { branches, doctors } = useClinic()
   const [open, setOpen] = useState(false)
   const [messages, setMessages] = useState<Message[]>([
-    { from: 'bot', text: 'Здравствуйте! Я — помощник клиники KARAT. Подскажу цены, адреса и помогу записаться. Чем помочь?' },
+    { from: 'bot', text: 'Здравствуйте! Я — помощник клиники KARAT TITAN. Подскажу цены, адреса и помогу записаться. Чем помочь?' },
   ])
   const [input, setInput] = useState('')
   const bottomRef = useRef<HTMLDivElement>(null)
@@ -95,7 +95,7 @@ export function ChatBot({ onBook }: ChatBotProps) {
                 <MessageCircle size={18} aria-hidden="true" />
               </span>
               <span>
-                <strong className="block text-sm font-semibold">Помощник KARAT</strong>
+                <strong className="block text-sm font-semibold">Помощник KARAT TITAN</strong>
                 <span className="block text-[11px] text-white/60">Отвечает мгновенно</span>
               </span>
             </div>

@@ -18,7 +18,7 @@ export function Testimonials() {
           ))}
         </div>
         <blockquote className="mt-5 flex-1 text-sm leading-relaxed text-text-primary">
-          Спасибо клинике KARAT за мою новую улыбку! Всё прошло легко, без боли и с отличным результатом. Отдельное спасибо врачу за спокойствие и внимание.
+          Спасибо клинике KARAT TITAN за мою новую улыбку! Всё прошло легко, без боли и с отличным результатом. Отдельное спасибо врачу за спокойствие и внимание.
         </blockquote>
         <figcaption className="mt-5 flex items-center justify-between border-t border-line pt-4">
           <span>

@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<title>Вопросы для сайта и чат-бота — KARAT</title>
+<style>
+  @page { size: A4; margin: 18mm 16mm; }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: "Segoe UI", Arial, sans-serif; font-size: 11.5pt; color: #1c2b24; line-height: 1.5; }
+  .cover { text-align: center; padding: 40px 0 30px; }
+  .cover h1 { font-size: 22pt; color: #1e4a38; margin-bottom: 12px; }
+  .cover p { font-size: 12pt; color: #4a5f55; max-width: 480px; margin: 0 auto; }
+  .note { background: #f3efe4; border-left: 4px solid #b8a05a; padding: 14px 16px; margin: 20px 0 30px; border-radius: 6px; font-size: 10.5pt; }
+  h2 { font-size: 14pt; color: #1e4a38; margin: 26px 0 4px; padding-bottom: 6px; border-bottom: 2px solid #1e4a38; }
+  h2 small { display: block; font-size: 10pt; font-weight: normal; color: #4a5f55; margin-top: 3px; }
+  .q { margin: 14px 0; padding: 12px 14px; background: #fff; border: 1px solid #e3dcc9; border-radius: 8px; page-break-inside: avoid; }
+  .q .num { font-weight: bold; color: #b8a05a; margin-right: 6px; }
+  .q .hint { display: block; margin-top: 6px; font-size: 10pt; color: #4a5f55; }
+  .q .hint b { color: #1e4a38; }
+  .answer { margin-top: 8px; border-bottom: 1px dashed #b9b09a; height: 26px; }
+  .answer.wide { height: 56px; }
+  .footer { margin-top: 30px; font-size: 9.5pt; color: #7a857e; text-align: center; }
+  ul.check { list-style: none; margin-top: 6px; font-size: 10.5pt; }
+  ul.check li { margin: 3px 0; }
+  ul.check li::before { content: "☐ "; color: #b8a05a; }
+</style>
+</head>
+<body>
+
+<div class="cover">
+  <h1>Вопросы для настройки сайта и чат-бота</h1>
+  <p>Стоматология KARAT, Тоболск.<br>
+  Эти ответы нужны, чтобы сайт и бот правильно записывали пациентов
+  и точно отвечали на их вопросы.</p>
+</div>
+
+<div class="note">
+  <b>Как заполнять.</b> Отвечайте прямо на этих листах ручкой или пришлите
+  ответы сообщением в любом виде — как удобно. Под каждым вопросом есть
+  подсказка, что именно написать. Если вопрос непонятен — пропустите,
+  уточним отдельно.
+</div>
+
+<h2>Блок 1. Врачи <small>Чтобы бот записывал к нужному специалисту</small></h2>
+
+<div class="q"><span class="num">1.</span> Кто из врачей что делает?
+  <span class="hint"><b>Как ответить:</b> рядом с каждым врачом напишите, чем он занимается. Например: «Суханова — терапевт, лечит кариес и пульпит», «Рабаданов — хирург, удаляет зубы и ставит импланты».</span>
+  <div class="answer wide"></div>
+</div>
+
+<div class="q"><span class="num">2.</span> В каком филиале принимает каждый врач?
+  <span class="hint"><b>Как ответить:</b> например «Суханова — 7а мкр., пн–пт до 18:00», «Коновалова — только 15-й мкр.». Если расписание плавает — напишите «как в программе».</span>
+  <div class="answer wide"></div>
+</div>
+
+<div class="q"><span class="num">3.</span> Кто принимает детей и с какого возраста?
+  <span class="hint"><b>Зачем:</b> когда родитель пишет боту «записать ребёнка», бот должен сразу предлагать детского врача и нужный филиал.</span>
+  <div class="answer"></div>
+</div>
+
+<div class="q"><span class="num">4.</span> Есть ли сотрудники, которых НЕ нужно показывать на сайте и в боте?
+  <div class="answer"></div>
+</div>
+
+<div class="q"><span class="num">5.</span> Кто ставит брекеты и занимается ортодонтией?
+  <div class="answer"></div>
+</div>
+
+<div class="q"><span class="num">6.</span> Кто делает импланты и протезы «всё на 4-х / 6-х»?
+  <div class="answer"></div>
+</div>
+
+<h2>Блок 2. Как записывать <small>Правила работы бота при записи</small></h2>
+
+<div class="q"><span class="num">7.</span> Можно ли записаться «на сегодня» или минимум за день?
+  <span class="hint"><b>Как ответить:</b> например «можно хоть за 2 часа до приёма» или «только на завтра и дальше».</span>
+  <div class="answer"></div>
+</div>
+
+<div class="q"><span class="num">8.</span> Пациент пишет «сильно болит зуб, срочно!» — что должен делать бот?
+  <ul class="check">
+    <li>Подобрать ближайшее свободное время сегодня у любого врача</li>
+    <li>Сразу дать телефон администратора</li>
+    <li>Другое: ___________________________________________</li>
+  </ul>
+</div>
+
+<div class="q"><span class="num">9.</span> Может ли бот сам отменять и переносить записи, или это делает только администратор по телефону?
+  <div class="answer"></div>
+</div>
+
+<div class="q"><span class="num">10.</span> За сколько часов до приёма нельзя отменять запись онлайн?
+  <div class="answer"></div>
+</div>
+
+<div class="q"><span class="num">11.</span> Нужна ли предоплата на какие-то услуги (например импланты, брекеты, протезы)?
+  <div class="answer"></div>
+</div>
+
+<div class="q"><span class="num">12.</span> Если пациент просит конкретного врача, а его нет в выбранном филиале — что предлагать: другой филиал с этим врачом или другого врача в том же филиале?
+  <div class="answer"></div>
+</div>
+
+<div class="q"><span class="num">13.</span> Нужен ли пункт «перезвоните мне» — когда бот просто передаёт телефон администратору, не записывая на приём?
+  <ul class="check">
+    <li>Да, нужен</li>
+    <li>Нет, пусть бот только записывает</li>
+  </ul>
+</div>
+
+<div class="q"><span class="num">14.</span> Как бот должен подтверждать запись?
+  <ul class="check">
+    <li>«Запись создана, администратор перезвонит для подтверждения»</li>
+    <li>«Запись подтверждена сразу, приходите в указанное время»</li>
+    <li>Другое: ___________________________________________</li>
+  </ul>
+</div>
+
+<h2>Блок 3. Цены и оплата <small>На вопросы про деньги пациенты спрашивают чаще всего</small></h2>
+
+<div class="q"><span class="num">15.</span> Консультация у терапевта / хирурга / ортопеда — сколько стоит? У ортодонта первичная 1200 ₽, повторная 600 ₽ — у остальных так же?
+  <div class="answer"></div>
+</div>
+
+<div class="q"><span class="num">16.</span> Цены в прайсе — это «под ключ» или «от»? Что может увеличить цену на месте?
+  <span class="hint"><b>Пример ответа:</b> «цены под ключ, анестезия и снимок включены» или «от — зависит от сложности, врач скажет точно после осмотра».</span>
+  <div class="answer wide"></div>
+</div>
+
+<div class="q"><span class="num">17.</span> Есть ли рассрочка или кредит? На какие услуги? Как оформляется?
+  <div class="answer wide"></div>
+</div>
+
+<div class="q"><span class="num">18.</span> Действуют ли сейчас акции или скидки? (пенсионерам, детям, семьям, «счастливые часы» и т.п.)
+  <div class="answer wide"></div>
+</div>
+
+<div class="q"><span class="num">19.</span> Дорогие услуги (All-on-4 — 290 000 ₽ и т.п.) — можно ли платить поэтапно? Какой первый платёж?
+  <div class="answer"></div>
+</div>
+
+<div class="q"><span class="num">20.</span> Принимаете ли по ДМС? Какие страховые компании?
+  <div class="answer"></div>
+</div>
+
+<div class="q"><span class="num">21.</span> Как можно оплатить? (карта / наличные / перевод / QR-код)
+  <div class="answer"></div>
+</div>
+
+<div class="q"><span class="num">22.</span> Выдаёте документы для налогового вычета? Куда обращаться пациенту?
+  <div class="answer"></div>
+</div>
+
+<h2>Блок 4. Приём пациентов <small>Ограничения и подготовка — чтобы бот не дал вредный совет</small></h2>
+
+<div class="q"><span class="num">23.</span> Лечите ли беременных? Есть ли ограничения по сроку, анестезии, рентгену?
+  <div class="answer wide"></div>
+</div>
+
+<div class="q"><span class="num">24.</span> Принимаете ли пациентов с серьёзными диагнозами (онкология после лучевой, сахарный диабет, принимающие антикоагулянты)? Что им говорить?
+  <div class="answer wide"></div>
+</div>
+
+<div class="q"><span class="num">25.</span> Есть ли лечение под седацией или наркозом? (частый вопрос для детей и тех, кто боится)
+  <div class="answer"></div>
+</div>
+
+<div class="q"><span class="num">26.</span> Делаете ли рентген и КТ? На каком филиале? Сколько стоит, если человеку нужен только снимок?
+  <div class="answer"></div>
+</div>
+
+<div class="q"><span class="num">27.</span> Что взять с собой на первый приём? (паспорт, старые снимки, список лекарств?)
+  <div class="answer"></div>
+</div>
+
+<div class="q"><span class="num">28.</span> Ребёнку до какого возраста обязательно приходить с родителем?
+  <div class="answer"></div>
+</div>
+
+<div class="q"><span class="num">29.</span> «Что делать до приёма» — короткие безопасные советы от врачей на типичные жалобы (напишите или скажите, и мы оформим):
+  <ul class="check">
+    <li>Болит зуб</li>
+    <li>Откололся зуб</li>
+    <li>Выпала пломба</li>
+    <li>Опухла щека</li>
+    <li>Кровоточит десна</li>
+  </ul>
+  <div class="answer wide"></div>
+</div>
+
+<h2>Блок 5. Про филиалы и мелочи</h2>
+
+<div class="q"><span class="num">30.</span> Точные часы работы каждого филиала по дням? Перерывы? (15-й мкр. — до 21:00, это верно?)
+  <div class="answer wide"></div>
+</div>
+
+<div class="q"><span class="num">31.</span> Есть ли парковка у филиалов? Как найти вход (этаж, домофон, ориентиры)?
+  <div class="answer wide"></div>
+</div>
+
+<div class="q"><span class="num">32.</span> Реальные ссылки на соцсети и мессенджеры клиники (WhatsApp, VK, Telegram и т.д.)
+  <div class="answer"></div>
+</div>
+
+<div class="q"><span class="num">33.</span> Какая гарантия на пломбы, коронки, импланты? Что отвечать на «а если выпадет через месяц?»
+  <div class="answer wide"></div>
+</div>
+
+<div class="q"><span class="num">34.</span> Юридическое название клиники и реквизиты для документов (для справок, договоров, политики на сайте)?
+  <div class="answer"></div>
+</div>
+
+<h2>Блок 6. Как бот понимает слова пациентов <small>Что бронировать на самом деле — отметьте или допишите</small></h2>
+
+<div class="q"><span class="num">35.</span> «Поставьте пломбу» → что записывать?
+  <ul class="check">
+    <li>Сразу на лечение кариеса</li>
+    <li>Сначала консультация/осмотр</li>
+  </ul>
+</div>
+
+<div class="q"><span class="num">36.</span> «Почистить зубы» → комплексная гигиена (5 000 ₽) или экспресс?
+  <div class="answer"></div>
+</div>
+
+<div class="q"><span class="num">37.</span> «Хочу отбелить зубы» → у нас есть отдельное отбеливание (ZOOM, домашние капы) или только Air Flow в составе гигиены?
+  <div class="answer"></div>
+</div>
+
+<div class="q"><span class="num">38.</span> «Удалить зуб» → сразу на удаление или сначала на осмотр к хирургу?
+  <div class="answer"></div>
+</div>
+
+<div class="q"><span class="num">39.</span> «Поставить брекеты» → записывать на консультацию ортодонта (1 200 ₽) + КПО (8 100 ₽) или сразу на фиксацию?
+  <div class="answer"></div>
+</div>
+
+<div class="q"><span class="num">40.</span> «Хочу имплант» → на консультацию имплантолога или сразу на операцию?
+  <div class="answer"></div>
+</div>
+
+<div class="footer">
+  Ответьте в любом удобном формате — ручкой на листе, сообщением или голосовым.
+  Частичные ответы тоже подходят: что знаем — тем уже пользуемся.
+</div>
+
+</body>
+</html>

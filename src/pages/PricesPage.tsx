@@ -121,7 +121,7 @@ export function PricesPage() {
                     <li key={`${s.name}-${idx}`} className="flex items-start justify-between gap-4 border-b border-line py-2 text-sm last:border-0">
                       <span className="text-text-primary">{s.name}</span>
                       <span className="shrink-0 text-right">
-                        <span className="block font-semibold text-ink">{formatPrice(s.price)}</span>
+                        <span className="block font-semibold text-ink">{s.priceLabel ?? formatPrice(s.price)}</span>
                         <span className="block text-xs text-text-secondary">{s.durationMin} мин</span>
                       </span>
                     </li>

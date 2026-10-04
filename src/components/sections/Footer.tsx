@@ -80,7 +80,7 @@ export function Footer({ onBook }: FooterProps) {
         </div>
 
         <div className="mt-16 flex flex-col items-center justify-between gap-4 border-t border-white/10 pt-8 text-sm text-text-inverse/50 md:flex-row">
-          <p>© 2025 Karat Dental. Все права защищены.</p>
+          <p>© 2025 Karat Titan. Все права защищены.</p>
           <div className="flex gap-6">
             <Link to="/politika-konfidencialnosti" className="transition-colors hover:text-text-inverse">
               Политика конфиденциальности
@@ -94,7 +94,7 @@ export function Footer({ onBook }: FooterProps) {
 
       <ScrollReveal>
         <div className="pointer-events-none absolute bottom-0 left-1/2 -translate-x-1/2 select-none font-display text-[18vw] font-semibold leading-none text-text-inverse/[0.03]">
-          KARAT
+          KARAT TITAN
         </div>
       </ScrollReveal>
     </footer>

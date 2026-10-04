@@ -52,7 +52,7 @@ export function ServicesPage() {
       <div className="shell py-10 md:py-14">
         <h1 className="font-display text-3xl font-semibold text-ink md:text-4xl">Услуги клиники</h1>
         <p className="mt-3 max-w-xl text-text-secondary">
-          Основные направления лечения в KARAT. Точные цены зависят от врача и филиала — смотрите раздел «Цены».
+          Основные направления лечения в KARAT TITAN. Точные цены зависят от врача и филиала — смотрите раздел «Цены».
         </p>
 
         <div className="mt-10 grid gap-4 md:grid-cols-2">

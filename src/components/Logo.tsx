@@ -11,7 +11,7 @@ export function Logo({ className }: LogoProps) {
         <Gem className="h-5 w-5" aria-hidden="true" />
       </span>
       <span className="flex flex-col items-start leading-none">
-        <span className="font-display text-xl font-semibold tracking-[0.08em]">KARAT</span>
+        <span className="font-display text-xl font-semibold tracking-[0.08em]">KARAT TITAN</span>
         <span className="mt-1 text-[9px] font-semibold uppercase tracking-[0.2em] text-text-secondary">
           стоматология
         </span>

@@ -17,7 +17,7 @@ export function DoctorsPage() {
         <h1 className="font-display text-3xl font-semibold text-ink md:text-4xl">Врачи</h1>
         <p className="mt-3 max-w-xl text-text-secondary">
           {branch === 'all'
-            ? 'Команда клиники KARAT во всех филиалах.'
+            ? 'Команда клиники KARAT TITAN во всех филиалах.'
             : `Принимают в филиале «${branches.find((b) => b.id === branch)?.name}».`}
         </p>
 

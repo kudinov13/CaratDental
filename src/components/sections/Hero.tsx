@@ -123,7 +123,7 @@ export function Hero({ onBook }: HeroProps) {
               <source media="(min-width: 1024px)" srcSet="/images/Hero_One.jpg" />
               <img
                 src="/images/Hero-mobile.jpg"
-                alt="Врач клиники KARAT"
+                alt="Врач клиники KARAT TITAN"
                 className="absolute inset-0 h-full w-full object-cover object-[right_bottom] lg:object-[78%_center]"
               />
             </picture>

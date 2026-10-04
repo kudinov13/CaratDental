@@ -12,7 +12,7 @@ export function ContactsPage() {
       <div className="shell py-10 md:py-14">
         <h1 className="font-display text-3xl font-semibold text-ink md:text-4xl">Контакты и филиалы</h1>
         <p className="mt-3 max-w-xl text-text-secondary">
-          Три филиала клиники KARAT в Тобольске. Выберите удобный и запишитесь на приём.
+          Три филиала клиники KARAT TITAN в Тобольске. Выберите удобный и запишитесь на приём.
         </p>
 
         <div className="mt-10 grid gap-4 md:grid-cols-3">

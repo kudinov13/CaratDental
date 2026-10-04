@@ -94,7 +94,6 @@ if (count === 0) {
     'INSERT INTO branches (id, name, short_name, address, phone, hours, map_url) VALUES (?,?,?,?,?,?,?)'
   )
   insBranch.run('m7a', 'Карат Титан', '7а мкр.', 'Тобольск, мкр. 7а, д. 7а, 1 этаж', '+7 (912) 388-78-12', '9:00–21:00, по предварительной записи', 'https://2gis.ru/tobolsk/geo/70000001046770706')
-  insBranch.run('m9', 'Карат Титан', '9-й мкр.', 'Тобольск, 9-й мкр., д. 11', '+7 (982) 971-81-97', '9:00–21:00, по предварительной записи', 'https://2gis.ru/tobolsk/geo/70000001087488201')
   insBranch.run('m15', 'Карат Титан', '15-й мкр. (детская)', 'Тобольск, 15-й мкр., д. 18', '+7 (922) 268-80-09', '9:00–21:00, по предварительной записи', 'https://2gis.ru/tobolsk/geo/70000001110932596')
 
   const insDoc = db.prepare('INSERT INTO doctors (id, name, role, photo, img_class, chief) VALUES (?,?,?,?,?,?)')

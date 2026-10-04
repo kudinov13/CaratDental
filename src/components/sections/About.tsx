@@ -11,16 +11,14 @@ export function About() {
             <span className="eyebrow mb-4 block">О клинике</span>
           </ScrollReveal>
           <ScrollReveal delay={0.1}>
-            <p className="font-display mt-6 max-w-md text-2xl font-medium leading-snug text-ink md:text-3xl">
-              Распределённая команда заботы о каждой улыбке.
-            </p>
-          </ScrollReveal>
-          <ScrollReveal delay={0.2}>
-            <div
-              className="mt-10 h-64 w-64 rounded-full opacity-40 blur-2xl md:h-80 md:w-80"
-              style={{ background: 'var(--accent-primary-300)' }}
-              aria-hidden="true"
-            />
+            <div className="mt-6 overflow-hidden rounded-[1.5rem] border border-line bg-bg-secondary shadow-sm">
+              <img
+                src="/images/team.jpg"
+                alt="Команда врачей клиники KARAT TITAN"
+                className="aspect-square w-full object-cover"
+                loading="lazy"
+              />
+            </div>
           </ScrollReveal>
         </div>
 

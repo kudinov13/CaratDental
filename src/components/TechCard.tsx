@@ -1,19 +1,19 @@
-import type { LucideIcon } from 'lucide-react'
-
 interface TechCardProps {
-  icon: LucideIcon
+  imageSrc: string
   title: string
   description: string
 }
 
-export function TechCard({ icon: Icon, title, description }: TechCardProps) {
+export function TechCard({ imageSrc, title, description }: TechCardProps) {
   return (
-    <article className="flex flex-col gap-4 rounded-radius-card bg-surface p-6 shadow-sm transition-shadow duration-300 hover:shadow-md md:p-8">
-      <div className="flex h-12 w-12 items-center justify-center rounded-radius-card-sm bg-bg-secondary text-ink">
-        <Icon size={24} aria-hidden="true" />
+    <article className="flex h-full flex-col overflow-hidden rounded-radius-card bg-surface shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-md">
+      <div className="aspect-[4/3] overflow-hidden bg-bg-secondary">
+        <img src={imageSrc} alt={title} className="h-full w-full object-cover transition-transform duration-500 hover:scale-105" loading="lazy" />
       </div>
-      <h3 className="font-display text-lg font-medium text-ink">{title}</h3>
-      <p className="text-sm leading-relaxed text-text-secondary">{description}</p>
+      <div className="flex flex-1 flex-col p-6 md:p-7">
+        <h3 className="font-display text-xl font-medium text-ink">{title}</h3>
+        <p className="mt-3 text-sm leading-relaxed text-text-secondary">{description}</p>
+      </div>
     </article>
   )
 }

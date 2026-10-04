@@ -12,10 +12,10 @@ export function ContactsPage() {
       <div className="shell py-10 md:py-14">
         <h1 className="font-display text-3xl font-semibold text-ink md:text-4xl">Контакты и филиалы</h1>
         <p className="mt-3 max-w-xl text-text-secondary">
-          Три филиала клиники KARAT TITAN в Тобольске. Выберите удобный и запишитесь на приём.
+          Два филиала клиники KARAT TITAN в Тобольске. Выберите удобный и запишитесь на приём.
         </p>
 
-        <div className="mt-10 grid gap-4 md:grid-cols-3">
+        <div className="mt-10 grid max-w-4xl gap-4 md:grid-cols-2">
           {branches.map((b, i) => (
             <ScrollReveal key={b.id} delay={i * 0.06}>
               <div className="flex h-full flex-col rounded-[1.35rem] border border-line bg-surface p-6">

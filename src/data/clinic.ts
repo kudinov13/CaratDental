@@ -36,15 +36,6 @@ export const branches: Branch[] = [
     mapUrl: 'https://2gis.ru/tobolsk/geo/70000001046770706',
   },
   {
-    id: 'm9',
-    name: 'Карат',
-    shortName: '9-й мкр.',
-    address: 'Тобольск, 9-й мкр., д. 11',
-    phone: '+7 (982) 971-81-97',
-    hours: '9:00–21:00, по предварительной записи',
-    mapUrl: 'https://2gis.ru/tobolsk/geo/70000001087488201',
-  },
-  {
     id: 'm15',
     name: 'Карат',
     shortName: '15-й мкр. (детская)',

@@ -1,74 +1,56 @@
 import { ScrollReveal } from '../ScrollReveal'
 import { LineReveal } from '../LineReveal'
 import { TechCard } from '../TechCard'
-import { Scan, Microscope, Activity } from 'lucide-react'
 
 const tech = [
   {
-    icon: Scan,
+    imageSrc: '/images/equipment/cbct.jpg',
     title: '3D-диагностика CBCT',
-    description:
-      'Точная визуализация челюсти за одно исследование. Планируем лечение на уровне миллиметров.',
+    description: 'Точная визуализация челюсти за одно исследование. Планируем лечение на уровне миллиметров.',
   },
   {
-    icon: Microscope,
-    title: 'Микроскопы Carl Zeiss',
-    description:
-      'Увеличение до 25× позволяет сохранить живые ткани зуба при лечении каналов.',
+    imageSrc: '/images/equipment/microscope.jpg',
+    title: 'Дентальный микроскоп',
+    description: 'Многократное увеличение помогает находить каналы и сохранять максимум здоровых тканей зуба.',
   },
   {
-    icon: Activity,
-    title: 'Цифровые сканеры',
-    description:
-      'Слепки без силикона. Модели и коронки изготавливаются с точностью до микрона.',
+    imageSrc: '/images/equipment/scanner.jpg',
+    title: 'Цифровой сканер',
+    description: 'Точные цифровые слепки без силиконовых масс для комфортного протезирования и ортодонтии.',
   },
 ]
 
 export function Technology() {
   return (
-    <section id="technology" className="relative z-20 -mt-6 rounded-t-[1.75rem] bg-bg-secondary py-10 lg:-mt-9 lg:rounded-t-[2.5rem] md:py-14">
-      <div className="shell relative z-10">
-        <div className="grid items-center gap-12 lg:grid-cols-2">
-          <div>
-            <LineReveal
-              as="h2"
-              className="font-display text-3xl font-medium tracking-tight text-ink md:text-4xl lg:text-5xl"
-            >
-              Технологии, за которыми
-              будущее стоматологии
+    <section id="technology" className="relative z-20 -mt-6 overflow-hidden rounded-t-[1.75rem] bg-bg-secondary lg:-mt-9 lg:rounded-t-[2.5rem]">
+      <div className="relative min-h-[58vh] overflow-hidden">
+        <img src="/images/technology-hero.jpg" alt="Современный кабинет стоматологии KARAT TITAN" className="absolute inset-0 h-full w-full object-cover" loading="lazy" />
+        <div className="absolute inset-0 bg-[linear-gradient(100deg,rgba(11,72,63,.94)_0%,rgba(11,72,63,.78)_48%,rgba(11,72,63,.18)_100%)]" aria-hidden="true" />
+        <div className="shell relative z-10 flex min-h-[58vh] items-center py-16 md:py-24">
+          <div className="max-w-2xl">
+            <ScrollReveal><span className="eyebrow mb-4 block text-white/70">Технологии</span></ScrollReveal>
+            <LineReveal as="h2" className="font-display text-4xl font-medium leading-tight tracking-tight text-white md:text-5xl lg:text-6xl">
+              Технологии, за которыми будущее стоматологии
             </LineReveal>
             <ScrollReveal delay={0.2}>
-              <p className="mt-6 max-w-xl text-base leading-relaxed text-text-secondary md:text-lg">
-                Инвестируем в оборудование, которое делает диагностику
-                понятной, а лечение предсказуемым. Никакой догадок, только
-                данные.
+              <p className="mt-6 max-w-xl text-lg leading-relaxed text-white/80 md:text-xl">
+                Инвестируем в оборудование, которое делает диагностику понятной, а лечение предсказуемым. Никаких догадок — только точные данные.
               </p>
             </ScrollReveal>
           </div>
+        </div>
+      </div>
 
-          <div className="relative flex items-center justify-center">
-            <svg
-              viewBox="0 0 200 240"
-              className="h-64 w-64 opacity-20 md:h-80 md:w-80"
-              fill="none"
-              aria-hidden="true"
-            >
-              <path
-                d="M100 20 C60 20 40 60 40 110 C40 170 60 220 100 220 C140 220 160 170 160 110 C160 60 140 20 100 20 Z"
-                fill="var(--accent-primary)"
-              />
-              <path
-                d="M100 40 C75 40 65 75 65 115 C65 165 80 200 100 200 C120 200 135 165 135 115 C135 75 125 40 100 40 Z"
-                fill="var(--bg-secondary)"
-              />
-              <circle cx="100" cy="120" r="15" fill="var(--accent-secondary)" />
-            </svg>
+      <div className="shell py-12 md:py-16">
+        <div className="mb-8 flex items-end justify-between gap-6">
+          <div>
+            <span className="eyebrow">Оснащение клиники</span>
+            <h3 className="mt-3 font-display text-3xl font-medium text-ink md:text-4xl">Оборудование для точного лечения</h3>
           </div>
         </div>
-
-        <div className="mt-16 grid gap-6 md:grid-cols-3">
-          {tech.map((item, i) => (
-            <ScrollReveal key={item.title} delay={i * 0.1}>
+        <div className="grid gap-6 md:grid-cols-3">
+          {tech.map((item, index) => (
+            <ScrollReveal key={item.title} delay={index * 0.1} className="h-full">
               <TechCard {...item} />
             </ScrollReveal>
           ))}

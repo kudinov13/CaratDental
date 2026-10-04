@@ -99,7 +99,7 @@ app.post('/api/login', loginLimiter, (req, res) => {
 const getSetting = (key, fallback) => db.prepare('SELECT value FROM settings WHERE key = ?').get(key)?.value ?? fallback
 
 function clinicData() {
-  const branches = db.prepare('SELECT * FROM branches').all()
+  const branches = db.prepare("SELECT * FROM branches WHERE id != 'm9'").all()
   const doctorRows = db.prepare('SELECT * FROM doctors').all()
   const doctorBranches = db.prepare('SELECT * FROM doctor_branches').all()
   const services = db.prepare('SELECT * FROM services').all()
@@ -218,7 +218,7 @@ app.post('/api/bookings', bookingLimiter, async (req, res) => {
   if (!dateRe.test(date)) return res.status(400).json({ error: 'Некорректная дата' })
   if (!timeRe.test(time)) return res.status(400).json({ error: 'Некорректное время' })
 
-  const branch = db.prepare('SELECT id FROM branches WHERE id = ?').get(branchId)
+  const branch = db.prepare("SELECT id FROM branches WHERE id = ? AND id != 'm9'").get(branchId)
   const doctor = db.prepare('SELECT id, sqns_employee_id FROM doctors WHERE id = ?').get(doctorId)
   if (!branch || !doctor) return res.status(400).json({ error: 'Неверный филиал или врач' })
 

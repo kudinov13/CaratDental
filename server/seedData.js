@@ -161,7 +161,7 @@ export const seedDoctors = [
     id: 'suhanova',
     name: 'Суханова Марина Николаевна',
     role: 'Детский и взрослый терапевт, ортопед, имплантолог, детский хирург',
-    photo: '/images/doctors/doctor-2.svg',
+    photo: '/images/doctors/Karina.jpg',
     chief: true,
     branchIds: ['m15'],
     services: [

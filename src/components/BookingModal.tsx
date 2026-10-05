@@ -15,8 +15,9 @@ interface BookingModalProps {
   onOpenChange: (open: boolean) => void
 }
 
-function todayStr() {
+function tomorrowStr() {
   const d = new Date()
+  d.setDate(d.getDate() + 1)
   return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`
 }
 
@@ -238,7 +239,7 @@ export function BookingModal({ open, onOpenChange }: BookingModalProps) {
                         name="date"
                         required
                         type="date"
-                        min={todayStr()}
+                        min={tomorrowStr()}
                         value={date}
                         disabled={!doctorId}
                         onChange={(e) => {

@@ -16,14 +16,14 @@ interface ChatBotProps {
 
 const quickReplies = ['Записаться на приём', 'Цены', 'Адреса филиалов', 'Врачи', 'Режим работы']
 
+// Локальный фолбэк, если API чата недоступен
 function botAnswer(raw: string, branches: { shortName: string; address: string; phone: string; hours: string }[], doctors: { name: string; role: string; services: { name: string; price: number }[] }[]): string {
   const q = raw.toLowerCase()
 
   if (/запис|при[её]м|записать/.test(q))
     return 'Конечно! Нажмите «Записаться на приём» ниже — выберите филиал, врача, дату и время. Заявка сразу уйдёт администратору филиала.'
-  if (/цен|стоим|сколько|прайс|руб/.test(q)) {
-    return 'Ориентировочные цены: первичная консультация — от 1 200 ₽, лечение кариеса — от 3 000 ₽, удаление зуба — от 2 500 ₽. Полный актуальный прайс — на странице «Цены».'
-  }
+  if (/цен|стоим|сколько|прайс|руб/.test(q))
+    return 'Ориентировочные цены: первичная консультация — от 600 ₽ (ортодонт — 1 200 ₽), лечение кариеса — от 3 000 ₽, удаление зуба — от 2 500 ₽. Полный актуальный прайс — на странице «Цены».'
   if (/адрес|где|филиал|находитесь|добраться/.test(q))
     return `У нас 2 филиала в Тобольске:\n${branches.map((b) => `• ${b.address}`).join('\n')}\nФилиал на 15 мкр. — детская стоматология.`
   if (/врач|доктор|кто принимает|специалист/.test(q))
@@ -41,14 +41,15 @@ function botAnswer(raw: string, branches: { shortName: string; address: string; 
   if (/спасибо|благодар/.test(q))
     return 'Всегда рады помочь! Если появятся вопросы — пишите.'
 
-  return 'Я пока учусь и могу подсказать про цены, врачей, адреса и запись. Для сложных вопросов оставьте заявку — администратор перезвонит.'
+  return 'Это лучше уточнить у администратора: +7 (912) 388-78-12 или +7 (922) 268-80-09. Либо оставьте номер — вам перезвонят.'
 }
 
 export function ChatBot({ onBook }: ChatBotProps) {
   const { branches, doctors } = useClinic()
   const [open, setOpen] = useState(false)
+  const [busy, setBusy] = useState(false)
   const [messages, setMessages] = useState<Message[]>([
-    { from: 'bot', text: 'Здравствуйте! Я — помощник клиники KARAT TITAN. Подскажу цены, адреса и помогу записаться. Чем помочь?' },
+    { from: 'bot', text: 'Здравствуйте! Я — помощник клиники KARAT TITAN. Подскажу цены, адреса и помогу записаться на приём. Чем помочь?' },
   ])
   const [input, setInput] = useState('')
   const bottomRef = useRef<HTMLDivElement>(null)
@@ -57,14 +58,40 @@ export function ChatBot({ onBook }: ChatBotProps) {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' })
   }, [messages, open])
 
-  const send = (text: string) => {
+  const send = async (text: string) => {
     const trimmed = text.trim()
-    if (!trimmed) return
-    setMessages((m) => [...m, { from: 'user', text: trimmed }])
+    if (!trimmed || busy) return
+    const history = [...messages, { from: 'user' as const, text: trimmed }]
+    setMessages(history)
     setInput('')
-    setTimeout(() => {
+    setBusy(true)
+
+    try {
+      const res = await fetch('/api/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          messages: history.slice(-20).map((m) => ({
+            role: m.from === 'user' ? 'user' : 'assistant',
+            content: m.text,
+          })),
+        }),
+      })
+      if (!res.ok) throw new Error(`chat ${res.status}`)
+      const data = await res.json()
+      const botMsgs: Message[] = [{ from: 'bot', text: data.reply || 'Подскажите, пожалуйста, подробнее?' }]
+      if (data.booking) {
+        botMsgs.push({
+          from: 'bot',
+          text: `Запись подтверждена ✓\nВрач: ${data.booking.doctor}\nДата: ${data.booking.date} в ${data.booking.time}\nАдрес: ${data.booking.address}\nПриходите в указанное время, с собой — паспорт.`,
+        })
+      }
+      setMessages((m) => [...m, ...botMsgs])
+    } catch {
       setMessages((m) => [...m, { from: 'bot', text: botAnswer(trimmed, branches, doctors) }])
-    }, 500)
+    } finally {
+      setBusy(false)
+    }
   }
 
   return (
@@ -110,8 +137,14 @@ export function ChatBot({ onBook }: ChatBotProps) {
                   {m.text}
                 </div>
               ))}
+              {busy && (
+                <div className="w-fit rounded-2xl rounded-bl-sm bg-bg-secondary px-3.5 py-2.5 text-[13px] text-text-muted">
+                  Печатает…
+                </div>
+              )}
               {/запис|при[её]м/.test(messages[messages.length - 1]?.text.toLowerCase() ?? '') &&
-                messages[messages.length - 1]?.from === 'bot' && (
+                messages[messages.length - 1]?.from === 'bot' &&
+                !busy && (
                 <button
                   type="button"
                   onClick={() => { setOpen(false); onBook() }}

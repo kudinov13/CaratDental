@@ -5,8 +5,10 @@ import { fileURLToPath } from 'node:url'
 import { dirname, join } from 'node:path'
 import helmet from 'helmet'
 import rateLimit from 'express-rate-limit'
+import { readFileSync } from 'node:fs'
 import db from './db.js'
 import * as sqns from './sqns.js'
+import * as gigachat from './gigachat.js'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 const app = express()
@@ -148,16 +150,14 @@ async function sqnsServiceIdsFor(doctorId, sqnsEmployeeId, serviceName) {
   return mine.length ? [Number(mine[0].id)] : []
 }
 
-app.get('/api/slots', async (req, res) => {
-  const { doctor, date, service } = req.query
-  if (!doctor || !date) return res.status(400).json({ error: 'doctor and date required' })
-
+// Вычисление слотов для даты. Используется маршрутом /api/slots и функцией бота.
+async function computeSlots(doctorId, date, service) {
   const d = new Date(`${date}T12:00:00`)
-  if (Number.isNaN(d.getTime())) return res.status(400).json({ error: 'bad date' })
+  if (Number.isNaN(d.getTime())) return { slots: [], error: 'bad date' }
 
   const weekday = d.getDay()
-  const sched = db.prepare('SELECT * FROM schedules WHERE doctor_id = ? AND weekday = ? AND off = 0').get(doctor, weekday)
-  if (!sched) return res.json({ slots: [] })
+  const sched = db.prepare('SELECT * FROM schedules WHERE doctor_id = ? AND weekday = ? AND off = 0').get(doctorId, weekday)
+  if (!sched) return { slots: [] }
 
   const slotMin = Number(getSetting('slot_minutes', '30'))
   const leadH = Number(getSetting('min_lead_hours', '2'))
@@ -167,7 +167,7 @@ app.get('/api/slots', async (req, res) => {
 
   const taken = new Set(
     db.prepare("SELECT time FROM bookings WHERE doctor_id = ? AND date = ? AND status != 'cancelled'")
-      .all(doctor, date).map((r) => r.time)
+      .all(doctorId, date).map((r) => r.time)
   )
 
   const slots = []
@@ -178,10 +178,10 @@ app.get('/api/slots', async (req, res) => {
   }
 
   // SQNS: если врач замаплен — занятость берём из МИС (занятое на ресепшене = занято на сайте)
-  const doc = db.prepare('SELECT sqns_employee_id FROM doctors WHERE id = ?').get(doctor)
+  const doc = db.prepare('SELECT sqns_employee_id FROM doctors WHERE id = ?').get(doctorId)
   if (sqns.sqnsEnabled && doc?.sqns_employee_id) {
     try {
-      const serviceIds = await sqnsServiceIdsFor(doctor, doc.sqns_employee_id, service)
+      const serviceIds = await sqnsServiceIdsFor(doctorId, doc.sqns_employee_id, service)
       if (serviceIds.length) {
         const times = await sqns.availableTimes(doc.sqns_employee_id, serviceIds, date)
         const freeSet = new Set(times.map((t) => t.slice(11, 16)))
@@ -192,7 +192,13 @@ app.get('/api/slots', async (req, res) => {
     }
   }
 
-  res.json({ slots })
+  return { slots }
+}
+
+app.get('/api/slots', async (req, res) => {
+  const { doctor, date, service } = req.query
+  if (!doctor || !date) return res.status(400).json({ error: 'doctor and date required' })
+  res.json(await computeSlots(doctor, date, service))
 })
 
 function cleanBookingInput(body) {
@@ -212,21 +218,30 @@ function cleanBookingInput(body) {
 const dateRe = /^\d{4}-\d{2}-\d{2}$/
 const timeRe = /^([01]\d|2[0-3]):([0-5]\d)$/
 
-app.post('/api/bookings', bookingLimiter, async (req, res) => {
-  const { branchId, doctorId, service, date, time, name, phone, comment } = cleanBookingInput(req.body || {})
+const todayStr = () => {
+  const n = new Date()
+  return `${n.getFullYear()}-${String(n.getMonth() + 1).padStart(2, '0')}-${String(n.getDate()).padStart(2, '0')}`
+}
+
+// Создание записи. Используется маршрутом /api/bookings и функцией бота.
+// Возвращает { status, body } — статус HTTP и JSON-ответ.
+async function createBooking(input) {
+  const { branchId, doctorId, service, date, time, name, phone, comment } = cleanBookingInput(input || {})
   if (!branchId || !doctorId || !date || !time || !name || !phone)
-    return res.status(400).json({ error: 'Заполните обязательные поля' })
-  if (!dateRe.test(date)) return res.status(400).json({ error: 'Некорректная дата' })
-  if (!timeRe.test(time)) return res.status(400).json({ error: 'Некорректное время' })
+    return { status: 400, body: { error: 'Заполните обязательные поля' } }
+  if (!dateRe.test(date)) return { status: 400, body: { error: 'Некорректная дата' } }
+  if (!timeRe.test(time)) return { status: 400, body: { error: 'Некорректное время' } }
+  if (date <= todayStr())
+    return { status: 400, body: { error: 'Онлайн-запись доступна только на завтра и позже' } }
 
   const branch = db.prepare("SELECT id FROM branches WHERE id = ? AND id != 'm9'").get(branchId)
   const doctor = db.prepare('SELECT id, sqns_employee_id FROM doctors WHERE id = ?').get(doctorId)
-  if (!branch || !doctor) return res.status(400).json({ error: 'Неверный филиал или врач' })
+  if (!branch || !doctor) return { status: 400, body: { error: 'Неверный филиал или врач' } }
 
   const clash = db.prepare(
     "SELECT id FROM bookings WHERE doctor_id = ? AND date = ? AND time = ? AND status != 'cancelled'"
   ).get(doctorId, date, time)
-  if (clash) return res.status(409).json({ error: 'Это время уже занято' })
+  if (clash) return { status: 409, body: { error: 'Это время уже занято' } }
 
   // Создаём запись в МИС SQNS (Тобольск — UTC+5)
   let sqnsVisitId = null
@@ -243,7 +258,7 @@ app.post('/api/bookings', bookingLimiter, async (req, res) => {
     } catch (e) {
       console.error('[SQNS] createVisit failed:', e.message)
       if (e.status === 422 || e.status === 409)
-        return res.status(409).json({ error: 'Это время только что заняли — выберите другое' })
+        return { status: 409, body: { error: 'Это время только что заняли — выберите другое' } }
     }
   }
 
@@ -251,7 +266,12 @@ app.post('/api/bookings', bookingLimiter, async (req, res) => {
     'INSERT INTO bookings (branch_id, doctor_id, service, date, time, name, phone, comment, sqns_visit_id) VALUES (?,?,?,?,?,?,?,?,?)'
   ).run(branchId, doctorId, service, date, time, name, phone, comment, sqnsVisitId)
 
-  res.json({ ok: true, id: info.lastInsertRowid, sqnsVisitId })
+  return { status: 200, body: { ok: true, id: info.lastInsertRowid, sqnsVisitId } }
+}
+
+app.post('/api/bookings', bookingLimiter, async (req, res) => {
+  const r = await createBooking(req.body)
+  res.status(r.status).json(r.body)
 })
 
 // ---------- Admin API ----------
@@ -403,6 +423,175 @@ app.get('/api/admin/stats', auth, (req, res) => {
     'SELECT br.short_name AS name, COUNT(*) AS c FROM bookings b LEFT JOIN branches br ON br.id=b.branch_id GROUP BY b.branch_id'
   ).all()
   res.json({ total, byStatus, byDoctor, byBranch })
+})
+
+// ---------- Chat bot (GigaChat + записи) ----------
+
+const chatLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 60,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { error: 'Слишком много сообщений. Попробуйте позже.' },
+})
+
+let knowledgeCache = ''
+function botKnowledge() {
+  if (!knowledgeCache) {
+    try { knowledgeCache = readFileSync(join(__dirname, '..', 'bot-knowledge.md'), 'utf8') }
+    catch { knowledgeCache = '' }
+  }
+  return knowledgeCache
+}
+
+function systemPrompt() {
+  const { branches, doctors } = clinicData()
+  const docList = doctors.map((d) =>
+    `- ${d.name} (${d.role}), филиалы: ${d.branchIds.join(', ')}, услуги: ${d.services.slice(0, 12).map((s) => s.name).join('; ')}`
+  ).join('\n')
+  return `Ты — помощник стоматологической клиники «Карат Титан» в Тобольске на сайте клиники.
+Сегодня: ${todayStr()} (формат YYYY-MM-DD). Записывать можно только на завтра и позже.
+
+ВАЖНО:
+- Никогда не упоминай, что ты GigaChat, ИИ, нейросеть, языковая модель или бот на технологии.
+  Ты — «помощник клиники Карат Титан».
+- Не знаешь ответа или вопрос нестандартный → ответь: «Это лучше уточнить у администратора:
+  +7 (912) 388-78-12 или +7 (922) 268-80-09. Либо оставьте номер телефона — вам перезвонят».
+- Не давай медицинских рекомендаций сверх раздела «Первая помощь до приёма».
+- Ответы короткие, дружелюбные, по-русски. Без markdown-заголовков.
+
+ЗАПИСЬ НА ПРИЁМ:
+- Если пациент хочет записаться — используй функции get_branches, get_doctors, get_slots, create_booking.
+- Последовательность: уточни жалобу/услугу → предложи подходящего врача и филиал → спроси дату →
+  покажи свободное время (get_slots) → спроси ФИО и телефон → создай запись (create_booking).
+- На сегодня не записывай — только завтра и дальше. Если срочно/сильная боль — телефон администратора.
+- Отмена и перенос — только по телефону администратора.
+- После успешной записи подтверди: врач, дата, время, адрес филиала. Запись действует сразу —
+  ждать звонка не нужно.
+
+Филиалы: ${branches.map((b) => `${b.id} — ${b.address}, ${b.phone}`).join('; ')}
+
+Врачи:
+${docList}
+
+БАЗА ЗНАНИЙ КЛИНИКИ:
+${botKnowledge()}`
+}
+
+const chatFunctions = [
+  {
+    name: 'get_branches',
+    description: 'Список филиалов клиники с адресами и телефонами',
+    parameters: { type: 'object', properties: {}, required: [] },
+  },
+  {
+    name: 'get_doctors',
+    description: 'Список врачей, можно фильтровать по филиалу',
+    parameters: {
+      type: 'object',
+      properties: { branch_id: { type: 'string', description: 'id филиала (m7a или m15), необязательно' } },
+      required: [],
+    },
+  },
+  {
+    name: 'get_slots',
+    description: 'Свободное время врача на дату (YYYY-MM-DD). Записывать можно только на завтра и позже.',
+    parameters: {
+      type: 'object',
+      properties: {
+        doctor_id: { type: 'string' },
+        date: { type: 'string', description: 'YYYY-MM-DD' },
+        service: { type: 'string', description: 'название услуги, необязательно' },
+      },
+      required: ['doctor_id', 'date'],
+    },
+  },
+  {
+    name: 'create_booking',
+    description: 'Создать запись на приём. Перед вызовом нужны: doctor_id, date, time, name (ФИО), phone.',
+    parameters: {
+      type: 'object',
+      properties: {
+        doctor_id: { type: 'string' },
+        date: { type: 'string', description: 'YYYY-MM-DD' },
+        time: { type: 'string', description: 'HH:MM' },
+        name: { type: 'string', description: 'ФИО пациента' },
+        phone: { type: 'string', description: 'Телефон пациента' },
+        service: { type: 'string', description: 'название услуги, необязательно' },
+      },
+      required: ['doctor_id', 'date', 'time', 'name', 'phone'],
+    },
+  },
+]
+
+async function runChatTool(name, args) {
+  const { branches, doctors } = clinicData()
+  if (name === 'get_branches')
+    return { branches: branches.map((b) => ({ id: b.id, address: b.address, phone: b.phone, hours: b.hours })) }
+  if (name === 'get_doctors')
+    return {
+      doctors: doctors
+        .filter((d) => !args.branch_id || d.branchIds.includes(args.branch_id))
+        .map((d) => ({ id: d.id, name: d.name, role: d.role, branches: d.branchIds })),
+    }
+  if (name === 'get_slots') {
+    const doctor = doctors.find((d) => d.id === args.doctor_id)
+    if (!doctor) return { error: 'Врач не найден' }
+    if (String(args.date) <= todayStr())
+      return { error: 'Запись доступна только на завтра и позже. Предложи ближайшие даты.' }
+    const { slots } = await computeSlots(args.doctor_id, args.date, args.service)
+    return { doctor: doctor.name, date: args.date, free: slots.filter((s) => s.available).map((s) => s.time) }
+  }
+  if (name === 'create_booking') {
+    const doctor = doctors.find((d) => d.id === args.doctor_id)
+    if (!doctor) return { error: 'Врач не найден' }
+    const r = await createBooking({ ...args, branchId: doctor.branchIds[0] })
+    if (r.body.ok) {
+      const branch = branches.find((b) => b.id === doctor.branchIds[0])
+      return {
+        ok: true,
+        booking: {
+          doctor: doctor.name, date: args.date, time: args.time,
+          address: branch?.address || '', phone: branch?.phone || '',
+        },
+      }
+    }
+    return { error: r.body.error || 'Не удалось создать запись' }
+  }
+  return { error: 'unknown function' }
+}
+
+app.post('/api/chat', chatLimiter, async (req, res) => {
+  if (!gigachat.gigachatEnabled)
+    return res.status(503).json({ error: 'Чат не настроен' })
+
+  const history = Array.isArray(req.body?.messages) ? req.body.messages.slice(-20) : []
+  const messages = [{ role: 'system', content: systemPrompt() }]
+  for (const m of history) {
+    if (m.role === 'user' || m.role === 'assistant')
+      messages.push({ role: m.role, content: String(m.content || '').slice(0, 2000) })
+  }
+
+  try {
+    let booking = null
+    for (let i = 0; i < 6; i++) {
+      const reply = await gigachat.chat(messages, chatFunctions)
+      if (!reply.function_call) {
+        return res.json({ reply: reply.content || 'Подскажите, пожалуйста, подробнее?', booking })
+      }
+      const { name, arguments: rawArgs } = reply.function_call
+      let args = {}
+      try { args = rawArgs ? JSON.parse(rawArgs) : {} } catch { args = {} }
+      const result = await runChatTool(name, args)
+      if (result?.booking) booking = result.booking
+      messages.push({ role: 'assistant', content: null, function_call: reply.function_call })
+      messages.push({ role: 'function', name, content: JSON.stringify(result) })
+    }
+    res.json({ reply: 'Уточните, пожалуйста, детали — или оставьте номер, администратор перезвонит.', booking })
+  } catch (e) {
+    console.error('[GigaChat]', e.message)
+    res.status(502).json({ error: 'assistant unavailable' })
+  }
 })
 
 // ---------- Static SPA ----------

@@ -27,7 +27,13 @@ export function DoctorsPage() {
               <div className="flex h-full flex-col rounded-[1.35rem] border border-line bg-surface p-6">
                 <div className="flex items-center gap-4">
                   <span className="h-20 w-20 shrink-0 overflow-hidden rounded-full border-2 border-accent-secondary-300/60 bg-bg-secondary">
-                    <img src={d.photo} alt={d.name} className={`h-full w-full origin-top object-cover object-top ${d.imgClass ?? 'scale-[1.35]'}`} loading="lazy" />
+                    {d.photo ? (
+                      <img src={d.photo} alt={d.name} className={`h-full w-full origin-top object-cover object-top ${d.imgClass ?? 'scale-[1.35]'}`} loading="lazy" />
+                    ) : (
+                      <span className="flex h-full w-full items-center justify-center bg-accent-secondary-300 font-display text-xl font-semibold text-accent-primary-700">
+                        {d.name.split(' ').slice(0, 2).map((w) => w[0]).join('')}
+                      </span>
+                    )}
                   </span>
                   <span className="min-w-0">
                     {d.chief && (

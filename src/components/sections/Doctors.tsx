@@ -39,12 +39,18 @@ export function Doctors({ onBook }: DoctorsProps) {
                       <Award size={11} aria-hidden="true" />
                     </span>
                   )}
-                  <img
-                    src={photo}
-                    alt={name}
-                    className={`h-full w-full origin-top object-cover object-top ${imgClass ?? 'scale-[1.35]'}`}
-                    loading="lazy"
-                  />
+                  {photo ? (
+                    <img
+                      src={photo}
+                      alt={name}
+                      className={`h-full w-full origin-top object-cover object-top ${imgClass ?? 'scale-[1.35]'}`}
+                      loading="lazy"
+                    />
+                  ) : (
+                    <span className="flex h-full w-full items-center justify-center bg-accent-secondary-300 font-display text-xl font-semibold text-accent-primary-700 sm:text-2xl lg:text-3xl">
+                      {name.split(' ').slice(0, 2).map((w) => w[0]).join('')}
+                    </span>
+                  )}
                 </span>
                 <strong className="mt-3 font-display text-sm text-white sm:text-base">{name}</strong>
                 <span className="mt-1 text-[11px] leading-tight text-white/65 sm:text-xs">{role}</span>

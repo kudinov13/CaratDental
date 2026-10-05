@@ -28,7 +28,7 @@ export interface Doctor {
 export const branches: Branch[] = [
   {
     id: 'm7a',
-    name: 'Карат',
+    name: 'Карат Титан',
     shortName: '7а мкр.',
     address: 'Тобольск, мкр. 7а, д. 7а, 1 этаж',
     phone: '+7 (912) 388-78-12',
@@ -37,7 +37,7 @@ export const branches: Branch[] = [
   },
   {
     id: 'm15',
-    name: 'Карат',
+    name: 'Карат Титан',
     shortName: '15-й мкр. (детская)',
     address: 'Тобольск, 15-й мкр., д. 18',
     phone: '+7 (922) 268-80-09',

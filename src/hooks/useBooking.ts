@@ -1,7 +1,7 @@
 import { useOutletContext } from 'react-router-dom'
 
 export interface LayoutContext {
-  openBooking: () => void
+  openBooking: (doctorId?: string) => void
 }
 
 export function useBooking() {

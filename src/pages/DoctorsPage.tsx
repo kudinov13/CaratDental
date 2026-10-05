@@ -59,7 +59,7 @@ export function DoctorsPage() {
 
                 <button
                   type="button"
-                  onClick={openBooking}
+                  onClick={() => openBooking(d.id)}
                   className="mt-5 w-full cursor-pointer rounded-radius-control bg-accent-primary py-2.5 text-sm font-semibold text-text-inverse transition-colors hover:bg-accent-primary-700"
                 >
                   Записаться к врачу

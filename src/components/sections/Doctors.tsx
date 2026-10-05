@@ -4,7 +4,7 @@ import { useBranch } from '../../context/branch'
 import { useClinic } from '../../context/clinic'
 
 interface DoctorsProps {
-  onBook: () => void
+  onBook: (doctorId: string) => void
 }
 
 export function Doctors({ onBook }: DoctorsProps) {
@@ -26,11 +26,11 @@ export function Doctors({ onBook }: DoctorsProps) {
         </div>
 
         <div className="grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-3">
-          {ordered.map(({ name, role, photo, imgClass, branchIds, chief: isChief }, index) => (
+          {ordered.map(({ id, name, role, photo, imgClass, branchIds, chief: isChief }, index) => (
             <ScrollReveal key={name} delay={index * 0.05} className="h-full">
               <button
                 type="button"
-                onClick={onBook}
+                onClick={() => onBook(id)}
                 className="group flex h-full min-h-40 w-full cursor-pointer flex-col items-center justify-center rounded-[1.35rem] border border-transparent p-4 text-center transition-colors hover:border-white/15 hover:bg-white/10"
               >
                 <span className="relative h-20 w-20 overflow-hidden rounded-full border-2 border-accent-secondary-300/60 bg-bg-secondary transition-transform group-hover:scale-105 sm:h-24 sm:w-24 lg:h-32 lg:w-32">

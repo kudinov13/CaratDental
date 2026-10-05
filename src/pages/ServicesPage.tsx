@@ -91,7 +91,7 @@ export function ServicesPage() {
                   </p>
                   <button
                     type="button"
-                    onClick={openBooking}
+                    onClick={() => openBooking()}
                     className="mt-3 w-full cursor-pointer rounded-radius-control bg-accent-primary py-2.5 text-sm font-semibold text-text-inverse transition-colors hover:bg-accent-primary-700"
                   >
                     Записаться

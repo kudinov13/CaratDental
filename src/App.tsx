@@ -31,15 +31,19 @@ import { ServicesPage } from './pages/ServicesPage'
 
 function Layout() {
   const [bookingOpen, setBookingOpen] = useState(false)
-  const openBooking = () => setBookingOpen(true)
+  const [preselectDoctor, setPreselectDoctor] = useState('')
+  const openBooking = (doctorId?: string) => {
+    setPreselectDoctor(doctorId || '')
+    setBookingOpen(true)
+  }
 
   return (
     <>
-      <Header onBook={openBooking} />
+      <Header onBook={() => openBooking()} />
       <Outlet context={{ openBooking }} />
       <Footer />
-      <BookingModal open={bookingOpen} onOpenChange={setBookingOpen} />
-      <ChatBot onBook={openBooking} />
+      <BookingModal open={bookingOpen} onOpenChange={setBookingOpen} initialDoctorId={preselectDoctor} />
+      <ChatBot onBook={() => openBooking()} />
     </>
   )
 }

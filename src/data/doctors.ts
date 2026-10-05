@@ -145,7 +145,7 @@ export const doctors: Doctor[] = [
   {
     id: 'suhanova',
     name: 'Суханова Марина Николаевна',
-    role: 'Детский и взрослый терапевт, ортопед, имплантолог, детский хирург',
+    role: 'Детский и взрослый терапевт, детский хирург',
     photo: '/images/doctors/Sukhanova.jpg',
     chief: true,
     branchIds: ['m15'],
@@ -223,7 +223,7 @@ export const doctors: Doctor[] = [
   {
     id: 'sukhorukova',
     name: 'Сухорукова Регина Рафисовна',
-    role: 'Детский терапевт',
+    role: 'Детский и взрослый терапевт',
     photo: '/images/doctors/Sukhorukova.jpg',
     chief: false,
     branchIds: ['m15'],

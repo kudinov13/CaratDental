@@ -41,7 +41,7 @@ export function ContactsPage() {
                 <div className="mt-auto flex gap-2 pt-5">
                   <button
                     type="button"
-                    onClick={openBooking}
+                    onClick={() => openBooking()}
                     className="flex-1 cursor-pointer rounded-radius-control bg-accent-primary py-2.5 text-sm font-semibold text-text-inverse transition-colors hover:bg-accent-primary-700"
                   >
                     Записаться

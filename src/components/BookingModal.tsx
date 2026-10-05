@@ -13,6 +13,7 @@ import { clsx } from 'clsx'
 interface BookingModalProps {
   open: boolean
   onOpenChange: (open: boolean) => void
+  initialDoctorId?: string
 }
 
 function tomorrowStr() {
@@ -21,7 +22,7 @@ function tomorrowStr() {
   return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`
 }
 
-export function BookingModal({ open, onOpenChange }: BookingModalProps) {
+export function BookingModal({ open, onOpenChange, initialDoctorId }: BookingModalProps) {
   const lenis = useLenis()
   const { branch } = useBranch()
   const { branches, doctors } = useClinic()
@@ -40,8 +41,9 @@ export function BookingModal({ open, onOpenChange }: BookingModalProps) {
     if (open) {
       lenis?.stop()
       setStatus('idle')
-      setBranchId(branch === 'all' ? branches[0].id : branch)
-      setDoctorId('')
+      const preDoc = initialDoctorId ? doctors.find((d) => d.id === initialDoctorId) : undefined
+      setBranchId(preDoc?.branchIds[0] ?? (branch === 'all' ? branches[0].id : branch))
+      setDoctorId(initialDoctorId || '')
       setService('')
       setDate('')
       setTime('')
@@ -54,7 +56,7 @@ export function BookingModal({ open, onOpenChange }: BookingModalProps) {
     return () => {
       lenis?.start()
     }
-  }, [open, lenis, branch, branches])
+  }, [open, lenis, branch, branches, doctors, initialDoctorId])
 
   const branchDoctors = useMemo(
     () => doctors.filter((d) => !branchId || d.branchIds.includes(branchId)),

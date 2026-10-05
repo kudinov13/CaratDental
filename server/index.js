@@ -158,7 +158,7 @@ async function sqnsBusyMinutes(employeeId, date) {
   let entry = sqnsVisitsCache.get(date)
   if (!entry || entry.exp < Date.now()) {
     const j = await sqns.listVisits(date, date)
-    const rows = j.visits?.data || j.visits || []
+    const rows = j.data || j.visits?.data || j.visits || []
     entry = { exp: Date.now() + 60_000, rows: Array.isArray(rows) ? rows : [] }
     sqnsVisitsCache.set(date, entry)
   }

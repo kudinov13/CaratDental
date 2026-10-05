@@ -57,5 +57,10 @@ for (const [id, s] of Object.entries(schedules)) {
   for (const wd of s.days) ins.run(id, wd, s.start, s.end)
 }
 
-console.log('Филиалы и расписания обновлены')
+// 4. Роли по ответу админа №1 (Суханова без ортопедии/имплантации,
+//    Сухорукова — детский и взрослый терапевт)
+db.prepare("UPDATE doctors SET role = 'Детский и взрослый терапевт, детский хирург' WHERE id = 'suhanova'").run()
+db.prepare("UPDATE doctors SET role = 'Детский и взрослый терапевт' WHERE id = 'sukhorukova'").run()
+
+console.log('Филиалы, расписания и роли обновлены')
 console.log(db.prepare('SELECT doctor_id, branch_id FROM doctor_branches').all())

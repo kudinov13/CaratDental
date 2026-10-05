@@ -63,7 +63,8 @@ db.prepare("UPDATE doctors SET role = 'Детский и взрослый тер
 db.prepare("UPDATE doctors SET role = 'Детский и взрослый терапевт' WHERE id = 'sukhorukova'").run()
 
 // 5. Маппинг врачей на сотрудников SQNS/1Дента (id из /api/v2/employee)
-const sqnsMap = { suhanova: 1, sukhorukova: 6, konovalova: 7, irisbekov: 12, melgaziev: 15, rabadanov: 16, amonatzoda: 17 }
+//    Строкой! Иначе в TEXT-колонку падает '16.0' и маппинг ломается
+const sqnsMap = { suhanova: '1', sukhorukova: '6', konovalova: '7', irisbekov: '12', melgaziev: '15', rabadanov: '16', amonatzoda: '17' }
 for (const [id, emp] of Object.entries(sqnsMap))
   db.prepare('UPDATE doctors SET sqns_employee_id = ? WHERE id = ?').run(emp, id)
 

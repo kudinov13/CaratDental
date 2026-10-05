@@ -152,6 +152,26 @@ async function sqnsServiceIdsFor(doctorId, sqnsEmployeeId, serviceName) {
   return mine.length ? [Number(mine[0].id)] : []
 }
 
+// Кэш визитов МИС по датам (занятость из 1Дента), TTL 60 сек
+const sqnsVisitsCache = new Map()
+async function sqnsBusyMinutes(employeeId, date) {
+  let entry = sqnsVisitsCache.get(date)
+  if (!entry || entry.exp < Date.now()) {
+    const j = await sqns.listVisits(date, date)
+    const rows = j.visits?.data || j.visits || []
+    entry = { exp: Date.now() + 60_000, rows: Array.isArray(rows) ? rows : [] }
+    sqnsVisitsCache.set(date, entry)
+  }
+  // Визит занимает слот, если начинается внутри него (учитываем минуты начала)
+  const starts = []
+  for (const v of entry.rows) {
+    if (v.deleted || String(v.resourceId) !== String(employeeId)) continue
+    const hhmm = v.datetime?.slice(11, 16)
+    if (hhmm) starts.push(Number(hhmm.slice(0, 2)) * 60 + Number(hhmm.slice(3)))
+  }
+  return starts
+}
+
 // Вычисление слотов для даты. Используется маршрутом /api/slots и функцией бота.
 async function computeSlots(doctorId, date, service) {
   const d = new Date(`${date}T12:00:00`)
@@ -166,6 +186,7 @@ async function computeSlots(doctorId, date, service) {
   const now = new Date()
   const isToday = date === `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`
   const minMinutes = now.getHours() * 60 + now.getMinutes() + leadH * 60
+  const LUNCH_START = 13 * 60, LUNCH_END = 14 * 60 // обед по правилам клиники
 
   const taken = new Set(
     db.prepare("SELECT time FROM bookings WHERE doctor_id = ? AND date = ? AND status != 'cancelled'")
@@ -175,25 +196,25 @@ async function computeSlots(doctorId, date, service) {
   const slots = []
   for (let m = sched.start_min; m + slotMin <= sched.end_min; m += slotMin) {
     const time = `${String(Math.floor(m / 60)).padStart(2, '0')}:${String(m % 60).padStart(2, '0')}`
-    const available = !taken.has(time) && !(isToday && m < minMinutes)
-    slots.push({ time, available })
+    const available = !taken.has(time) && !(isToday && m < minMinutes) && !(m >= LUNCH_START && m < LUNCH_END)
+    slots.push({ time, available, startMin: m })
   }
 
-  // SQNS: если врач замаплен — занятость берём из МИС (занятое на ресепшене = занято на сайте)
+  // SQNS: занятое в МИС (ресепшен) помечаем занятым на сайте
   const doc = db.prepare('SELECT sqns_employee_id FROM doctors WHERE id = ?').get(doctorId)
   if (sqns.sqnsEnabled && doc?.sqns_employee_id) {
     try {
-      const serviceIds = await sqnsServiceIdsFor(doctorId, doc.sqns_employee_id, service)
-      if (serviceIds.length) {
-        const times = await sqns.availableTimes(doc.sqns_employee_id, serviceIds, date)
-        const freeSet = new Set(times.map((t) => t.slice(11, 16)))
-        for (const s of slots) if (s.available) s.available = freeSet.has(s.time)
+      const busyStarts = await sqnsBusyMinutes(doc.sqns_employee_id, date)
+      for (const s of slots) {
+        if (!s.available) continue
+        if (busyStarts.some((b) => b >= s.startMin && b < s.startMin + slotMin)) s.available = false
       }
     } catch (e) {
-      console.error('[SQNS] slots fallback to local:', e.message)
+      console.error('[SQNS] visits busy check failed:', e.message)
     }
   }
 
+  for (const s of slots) delete s.startMin
   return { slots }
 }
 

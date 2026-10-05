@@ -26,7 +26,7 @@ export function Footer() {
       <div className="shell relative z-10">
         <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-5">
           <div className="lg:col-span-2">
-            <Logo className="rounded-full bg-bg-primary" />
+            <Logo className="h-20 rounded-full bg-bg-primary" />
             <p className="mt-4 max-w-xs text-sm text-text-inverse/60">
               Премиальная стоматология, где технологии и внимание к деталям
               работают на вашу улыбку.

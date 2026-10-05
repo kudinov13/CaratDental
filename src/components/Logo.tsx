@@ -7,7 +7,7 @@ export function Logo({ className }: LogoProps) {
     <img
       src="/images/logo-header.png"
       alt="KARAT TITAN — стоматология"
-      className={`h-12 w-auto ${className ?? ''}`}
+      className={`h-16 w-auto lg:h-[72px] ${className ?? ''}`}
     />
   )
 }

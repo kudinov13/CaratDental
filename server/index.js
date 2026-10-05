@@ -12,6 +12,8 @@ import * as gigachat from './gigachat.js'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 const app = express()
+// nginx reverse proxy: без этого express-rate-limit падает с ERR_ERL_UNEXPECTED_X_FORWARDED_FOR
+app.set('trust proxy', 'loopback')
 app.use(helmet({
   contentSecurityPolicy: {
     directives: {

@@ -112,7 +112,8 @@ export function ChatBot({ onBook }: ChatBotProps) {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 20, scale: 0.96 }}
             transition={{ duration: 0.2 }}
-            className="fixed bottom-[5.5rem] right-4 z-[90] flex h-[30rem] w-[calc(100vw-2rem)] max-w-sm flex-col overflow-hidden rounded-[1.35rem] border border-line bg-surface shadow-2xl sm:right-5"
+            data-lenis-prevent
+            className="fixed bottom-[5.5rem] right-4 z-[90] flex h-[30rem] w-[calc(100vw-2rem)] max-w-sm flex-col overflow-hidden overscroll-contain rounded-[1.35rem] border border-line bg-surface shadow-2xl sm:right-5"
           >
             <div className="flex items-center gap-3 bg-accent-primary-700 px-4 py-3 text-text-inverse">
               <span className="flex h-9 w-9 items-center justify-center rounded-full bg-white/15">
@@ -124,7 +125,7 @@ export function ChatBot({ onBook }: ChatBotProps) {
               </span>
             </div>
 
-            <div className="flex-1 space-y-2.5 overflow-y-auto p-4">
+            <div className="flex-1 space-y-2.5 overflow-y-auto overscroll-contain p-4">
               {messages.map((m, i) => (
                 <div
                   key={i}

@@ -62,5 +62,10 @@ for (const [id, s] of Object.entries(schedules)) {
 db.prepare("UPDATE doctors SET role = 'Детский и взрослый терапевт, детский хирург' WHERE id = 'suhanova'").run()
 db.prepare("UPDATE doctors SET role = 'Детский и взрослый терапевт' WHERE id = 'sukhorukova'").run()
 
-console.log('Филиалы, расписания и роли обновлены')
+// 5. Маппинг врачей на сотрудников SQNS/1Дента (id из /api/v2/employee)
+const sqnsMap = { suhanova: 1, sukhorukova: 6, konovalova: 7, irisbekov: 12, melgaziev: 15, rabadanov: 16, amonatzoda: 17 }
+for (const [id, emp] of Object.entries(sqnsMap))
+  db.prepare('UPDATE doctors SET sqns_employee_id = ? WHERE id = ?').run(emp, id)
+
+console.log('Филиалы, расписания, роли и SQNS-маппинг обновлены')
 console.log(db.prepare('SELECT doctor_id, branch_id FROM doctor_branches').all())

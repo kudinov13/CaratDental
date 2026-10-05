@@ -152,24 +152,30 @@ async function sqnsServiceIdsFor(doctorId, sqnsEmployeeId, serviceName) {
   return mine.length ? [Number(mine[0].id)] : []
 }
 
-// Кэш визитов МИС по датам (занятость из 1Дента), TTL 60 сек
+// Кэш визитов МИС по датам (занятость из 1Дента), TTL 60 сек.
+// Храним по дате → Map<resourceId, minutes[]> чтобы один запрос покрывал всех врачей.
 const sqnsVisitsCache = new Map()
-async function sqnsBusyMinutes(employeeId, date) {
-  let entry = sqnsVisitsCache.get(date)
+async function sqnsVisitsForRange(from, to) {
+  const key = `${from}..${to}`
+  let entry = sqnsVisitsCache.get(key)
   if (!entry || entry.exp < Date.now()) {
-    const j = await sqns.listVisits(date, date)
+    const j = await sqns.listVisits(from, to)
     const rows = j.data || j.visits?.data || j.visits || []
-    entry = { exp: Date.now() + 60_000, rows: Array.isArray(rows) ? rows : [] }
-    sqnsVisitsCache.set(date, entry)
+    const byRes = new Map()
+    for (const v of (Array.isArray(rows) ? rows : [])) {
+      if (v.deleted) continue
+      const date = v.datetime?.slice(0, 10)
+      const hhmm = v.datetime?.slice(11, 16)
+      if (!date || !hhmm) continue
+      const rid = String(v.resourceId)
+      const dayKey = `${rid}:${date}`
+      if (!byRes.has(dayKey)) byRes.set(dayKey, [])
+      byRes.get(dayKey).push(Number(hhmm.slice(0, 2)) * 60 + Number(hhmm.slice(3)))
+    }
+    entry = { exp: Date.now() + 60_000, byRes }
+    sqnsVisitsCache.set(key, entry)
   }
-  // Визит занимает слот, если начинается внутри него (учитываем минуты начала)
-  const starts = []
-  for (const v of entry.rows) {
-    if (v.deleted || String(v.resourceId) !== String(employeeId)) continue
-    const hhmm = v.datetime?.slice(11, 16)
-    if (hhmm) starts.push(Number(hhmm.slice(0, 2)) * 60 + Number(hhmm.slice(3)))
-  }
-  return starts
+  return entry.byRes
 }
 
 // Вычисление слотов для даты. Используется маршрутом /api/slots и функцией бота.
@@ -204,7 +210,8 @@ async function computeSlots(doctorId, date, service) {
   const doc = db.prepare('SELECT sqns_employee_id FROM doctors WHERE id = ?').get(doctorId)
   if (sqns.sqnsEnabled && doc?.sqns_employee_id) {
     try {
-      const busyStarts = await sqnsBusyMinutes(doc.sqns_employee_id, date)
+      const byRes = await sqnsVisitsForRange(date, date)
+      const busyStarts = byRes.get(`${doc.sqns_employee_id}:${date}`) || []
       for (const s of slots) {
         if (!s.available) continue
         if (busyStarts.some((b) => b >= s.startMin && b < s.startMin + slotMin)) s.available = false
@@ -222,6 +229,59 @@ app.get('/api/slots', async (req, res) => {
   const { doctor, date, service } = req.query
   if (!doctor || !date) return res.status(400).json({ error: 'doctor and date required' })
   res.json(await computeSlots(doctor, date, service))
+})
+
+// Доступность ближайших N дней одним запросом (для ленты дат в форме)
+app.get('/api/days', async (req, res) => {
+  const doctorId = String(req.query.doctor || '')
+  const days = Math.min(Math.max(Number(req.query.days) || 14, 1), 30)
+  if (!doctorId) return res.status(400).json({ error: 'doctor required' })
+
+  const schedByWd = new Map(
+    db.prepare('SELECT * FROM schedules WHERE doctor_id = ? AND off = 0').all(doctorId).map((s) => [s.weekday, s])
+  )
+  const slotMin = Number(getSetting('slot_minutes', '30'))
+
+  const from = (() => { const d = new Date(); d.setDate(d.getDate() + 1); return d.toISOString().slice(0, 10) })()
+  const to = (() => { const d = new Date(); d.setDate(d.getDate() + days); return d.toISOString().slice(0, 10) })()
+
+  const takenByDate = new Map()
+  for (const r of db.prepare(
+    "SELECT date, time FROM bookings WHERE doctor_id = ? AND date >= ? AND date <= ? AND status != 'cancelled'"
+  ).all(doctorId, from, to)) {
+    if (!takenByDate.has(r.date)) takenByDate.set(r.date, new Set())
+    takenByDate.get(r.date).add(r.time)
+  }
+
+  // Занятое в МИС за весь диапазон — один запрос
+  const doc = db.prepare('SELECT sqns_employee_id FROM doctors WHERE id = ?').get(doctorId)
+  let sqnsByRes = null
+  if (sqns.sqnsEnabled && doc?.sqns_employee_id) {
+    try { sqnsByRes = await sqnsVisitsForRange(from, to) }
+    catch (e) { console.error('[SQNS] days busy check failed:', e.message) }
+  }
+
+  const LUNCH_START = 13 * 60, LUNCH_END = 14 * 60
+  const out = []
+  for (let i = 1; i <= days; i++) {
+    const d = new Date(); d.setDate(d.getDate() + i)
+    const date = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`
+    const sched = schedByWd.get(d.getDay())
+    if (!sched) { out.push({ date, working: false, free: 0 }); continue }
+
+    const taken = takenByDate.get(date) || new Set()
+    const busy = sqnsByRes?.get(`${doc.sqns_employee_id}:${date}`) || []
+    let free = 0
+    for (let m = sched.start_min; m + slotMin <= sched.end_min; m += slotMin) {
+      if (m >= LUNCH_START && m < LUNCH_END) continue
+      const time = `${String(Math.floor(m / 60)).padStart(2, '0')}:${String(m % 60).padStart(2, '0')}`
+      if (taken.has(time)) continue
+      if (busy.some((b) => b >= m && b < m + slotMin)) continue
+      free++
+    }
+    out.push({ date, working: true, free })
+  }
+  res.json({ days: out })
 })
 
 function cleanBookingInput(body) {

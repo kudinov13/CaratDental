@@ -85,28 +85,25 @@ export function BookingModal({ open, onOpenChange, initialDoctorId }: BookingMod
     }
     let cancelled = false
     setDaysLoading(true)
-    const q = service ? `&service=${encodeURIComponent(service)}` : ''
-    Promise.all(
-      Array.from({ length: DAYS_AHEAD }, (_, i) => {
-        const d = dateStr(i + 1)
-        return fetch(`/api/slots?doctor=${doctorId}&date=${d}${q}`)
-          .then((r) => (r.ok ? r.json() : { slots: [] }))
-          .then((json): DayInfo => {
-            const list: TimeSlot[] = json.slots ?? []
-            return { date: d, free: list.filter((s) => s.available).length, working: list.length > 0 }
-          })
-          .catch((): DayInfo => ({ date: d, free: 0, working: true }))
+    fetch(`/api/days?doctor=${doctorId}&days=${DAYS_AHEAD}`)
+      .then((r) => (r.ok ? r.json() : Promise.reject()))
+      .then((json) => {
+        if (!cancelled) {
+          setDays((json.days ?? []).map((d: DayInfo) => ({ date: d.date, free: d.free, working: d.working })))
+          setDaysLoading(false)
+        }
       })
-    ).then((infos) => {
-      if (!cancelled) {
-        setDays(infos)
-        setDaysLoading(false)
-      }
-    })
+      .catch(() => {
+        if (!cancelled) {
+          // Фолбэк: дни показываем без счётчика свободных слотов
+          setDays(Array.from({ length: DAYS_AHEAD }, (_, i) => ({ date: dateStr(i + 1), free: -1, working: true })))
+          setDaysLoading(false)
+        }
+      })
     return () => {
       cancelled = true
     }
-  }, [doctorId, service])
+  }, [doctorId])
 
   // Слоты выбранного дня
   useEffect(() => {
@@ -335,7 +332,7 @@ export function BookingModal({ open, onOpenChange, initialDoctorId }: BookingMod
                                 </span>
                                 <span className="mt-0.5 text-base font-semibold leading-none">{dt.getDate()}</span>
                                 <span className={clsx('mt-1 text-[9px] leading-none', date === d.date ? 'text-text-inverse/80' : full ? 'text-text-muted' : 'text-accent-primary')}>
-                                  {!d.working ? 'выходной' : full ? 'занято' : `${d.free} слот${d.free === 1 ? '' : d.free < 5 ? 'а' : 'ов'}`}
+                                  {!d.working ? 'выходной' : full ? 'занято' : d.free < 0 ? ' ' : `${d.free} слот${d.free === 1 ? '' : d.free < 5 ? 'а' : 'ов'}`}
                                 </span>
                               </button>
                             )

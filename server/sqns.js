@@ -91,8 +91,16 @@ export const moveVisit = (visitId, datetime, comment) =>
 
 export const deleteVisit = (visitId) => api(`/api/v2/visit/${visitId}`, { method: 'DELETE' })
 
-export const listVisits = (dateFrom, dateTill, page = 1) =>
-  api(`/api/v2/visit?perPage=100&page=${page}&dateFrom=${dateFrom}&dateTill=${dateTill}`)
+/** Все визиты за период (догружает страницы до meta.lastPage) */
+export async function listVisits(dateFrom, dateTill) {
+  const first = await api(`/api/v2/visit?perPage=100&page=1&dateFrom=${dateFrom}&dateTill=${dateTill}`)
+  const lastPage = first.meta?.lastPage || 1
+  for (let p = 2; p <= lastPage; p++) {
+    const j = await api(`/api/v2/visit?perPage=100&page=${p}&dateFrom=${dateFrom}&dateTill=${dateTill}`)
+    first.data.push(...(j.data || []))
+  }
+  return first
+}
 
 /** Найти клиента по телефону */
 export const findClientByPhone = (phone) =>

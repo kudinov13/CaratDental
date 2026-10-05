@@ -37,7 +37,7 @@ function Layout() {
     <>
       <Header onBook={openBooking} />
       <Outlet context={{ openBooking }} />
-      <Footer onBook={openBooking} />
+      <Footer />
       <BookingModal open={bookingOpen} onOpenChange={setBookingOpen} />
       <ChatBot onBook={openBooking} />
     </>

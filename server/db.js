@@ -118,18 +118,16 @@ if (count === 0) {
   insSet.run('slot_minutes', '30')
 }
 
-// Админ по умолчанию: логин admin, пароль из ADMIN_PASSWORD или случайный
+// Админ по умолчанию: создаётся только если задан ADMIN_PASSWORD
 if (db.prepare('SELECT COUNT(*) AS c FROM admins').get().c === 0) {
   const rawPassword = process.env.ADMIN_PASSWORD
-  const generated = !rawPassword
-  const password = rawPassword || randomBytes(12).toString('hex')
-  const login = process.env.ADMIN_LOGIN || 'admin'
-  const salt = randomBytes(16).toString('hex')
-  const hash = scryptSync(password, salt, 64).toString('hex')
-  db.prepare('INSERT INTO admins (login, pass_hash, salt) VALUES (?,?,?)').run(login, hash, salt)
-  if (generated) {
-    console.warn(`[WARN] ADMIN_PASSWORD не задан. Создан временный пароль для ${login}: ${password}`)
-    console.warn('[WARN] Обязательно задайте ADMIN_PASSWORD в .env и пересоздайте БД перед production-запуском.')
+  if (!rawPassword) {
+    console.warn('[WARN] ADMIN_PASSWORD не задан. Администратор не создан. Задайте ADMIN_PASSWORD в .env и пересоздайте БД.')
+  } else {
+    const login = process.env.ADMIN_LOGIN || 'admin'
+    const salt = randomBytes(16).toString('hex')
+    const hash = scryptSync(rawPassword, salt, 64).toString('hex')
+    db.prepare('INSERT INTO admins (login, pass_hash, salt) VALUES (?,?,?)').run(login, hash, salt)
   }
 }
 

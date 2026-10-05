@@ -1,13 +1,8 @@
 import { MapPin } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import { ScrollReveal } from '../ScrollReveal'
-import { PillButton } from '../PillButton'
 import { Logo } from '../Logo'
 import { useClinic } from '../../context/clinic'
-
-interface FooterProps {
-  onBook: () => void
-}
 
 const links = {
   company: ['О нас', 'Команда', 'Карьера', 'Пресса'],
@@ -21,7 +16,7 @@ const links = {
   doctors: ['Алексей Воронов', 'Марина Светлова', 'Дмитрий Ковалёв', 'Елена Брагина'],
 }
 
-export function Footer({ onBook }: FooterProps) {
+export function Footer() {
   const { branches } = useClinic()
   return (
     <footer
@@ -29,21 +24,6 @@ export function Footer({ onBook }: FooterProps) {
       className="relative overflow-hidden rounded-t-radius-card bg-ink pb-8 pt-16 text-text-inverse md:pt-24"
     >
       <div className="shell relative z-10">
-        <div className="mb-12 flex flex-col items-start justify-between gap-8 border-b border-white/10 pb-12 md:flex-row md:items-end">
-          <div>
-            <h2 className="font-display text-3xl font-medium tracking-tight md:text-4xl lg:text-5xl">
-              Запишитесь на приём
-            </h2>
-            <p className="mt-4 max-w-md text-text-inverse/60">
-              Оставьте заявку, и администратор свяжется с вами, чтобы подобрать
-              удобное время.
-            </p>
-          </div>
-          <PillButton variant="gold" onClick={onBook}>
-            Записаться
-          </PillButton>
-        </div>
-
         <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-5">
           <div className="lg:col-span-2">
             <Logo className="text-text-inverse" />

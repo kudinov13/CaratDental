@@ -4,7 +4,6 @@ import { useEffect, useRef, useState } from 'react'
 import { MessageCircle, Send, X } from 'lucide-react'
 import { AnimatePresence, motion } from 'framer-motion'
 import { useClinic } from '../context/clinic'
-import { formatPrice } from '../data/clinic'
 
 interface Message {
   from: 'bot' | 'user'
@@ -23,9 +22,7 @@ function botAnswer(raw: string, branches: { shortName: string; address: string; 
   if (/запис|при[её]м|записать/.test(q))
     return 'Конечно! Нажмите «Записаться на приём» ниже — выберите филиал, врача, дату и время. Заявка сразу уйдёт администратору филиала.'
   if (/цен|стоим|сколько|прайс|руб/.test(q)) {
-    const all = doctors.flatMap((d) => d.services)
-    const min = Math.min(...all.filter((s) => s.price > 0).map((s) => s.price))
-    return `Ориентировочные цены: первичный приём — 300 ₽, лечение кариеса — от ${formatPrice(min)}, удаление зуба — 2 000 ₽. У каждого врача свой прайс — полный список на странице «Цены».`
+    return 'Ориентировочные цены: первичная консультация — от 1 200 ₽, лечение кариеса — от 3 000 ₽, удаление зуба — от 2 500 ₽. Полный актуальный прайс — на странице «Цены».'
   }
   if (/адрес|где|филиал|находитесь|добраться/.test(q))
     return `У нас 2 филиала в Тобольске:\n${branches.map((b) => `• ${b.address}`).join('\n')}\nФилиал на 15 мкр. — детская стоматология.`

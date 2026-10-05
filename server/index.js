@@ -51,9 +51,10 @@ app.use('/api/', apiLimiter)
 
 // ---------- Auth ----------
 
-const SECRET = process.env.KARAT_SECRET || 'karat-dev-secret-change-me'
-if (!process.env.KARAT_SECRET) {
-  console.warn('[WARN] KARAT_SECRET не задан. Используется небезопасный dev-секрет. Укажите KARAT_SECRET перед запуском в production.')
+const SECRET = process.env.KARAT_SECRET
+if (!SECRET) {
+  console.error('[ERROR] KARAT_SECRET не задан. Задайте KARAT_SECRET в .env перед запуском.')
+  process.exit(1)
 }
 const tokens = new Map() // token -> { login, exp }
 

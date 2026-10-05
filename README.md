@@ -1,97 +1,86 @@
-# Karat3
+# KARAT TITAN — сайт стоматологической клиники
 
-Премиальный лендинг стоматологической клиники. React 19 + TypeScript + Vite + Tailwind CSS v4 + Framer Motion + GSAP + Lenis.
+Премиальный многостраничный сайт стоматологической клиники KARAT TITAN в Тобольске. Включает лендинг, отдельные страницы услуг, врачей, цен, кейсов, отзывов и контактов, а также админ-панель и API для онлайн-записи.
 
-## Запуск
+## Стек
+
+- **Фронтенд:** React 19, TypeScript, Vite, Tailwind CSS v4, Framer Motion, GSAP, Lenis, React Router
+- **Бэкенд:** Node.js, Express 5, SQLite (`node:sqlite`)
+- **Интеграции:** SQNS / 1Denta CRM Exchange API (опционально, для синхронизации слотов)
+- **Линтер:** oxlint
+
+## Установка и запуск
 
 ```bash
 npm install
-npm run dev
 ```
+
+Скопируйте `.env.example` в `.env` и задайте секреты:
+
+```bash
+cp .env.example .env
+```
+
+Запустите фронтенд и API вместе:
+
+```bash
+npm run dev:all
+```
+
+- Фронтенд: `http://localhost:5173`
+- API: `http://localhost:3001`
+- API клиники: `http://localhost:3001/api/clinic`
 
 ## Скрипты
 
-- `npm run dev` — локальный dev-сервер
+- `npm run dev` — Vite dev-сервер
+- `npm run server` — API-сервер Node.js
+- `npm run dev:all` — фронтенд и API одновременно
 - `npm run build` — production-сборка
 - `npm run preview` — просмотр production-сборки
 - `npm run lint` — oxlint
 
 ## Структура
 
-- `src/components` — переиспользуемые компоненты (курсор, лоадер, кнопки, reveal-анимации, форма записи)
+- `src/components` — переиспользуемые компоненты (кнопки, анимации, форма записи, чат-бот)
 - `src/components/sections` — секции лендинга
-- `src/styles/index.css` — дизайн-токены и Tailwind v4 theme mapping
-- `public/` — статические ассеты
+- `src/pages` — отдельные страницы (`/uslugi`, `/vrachi`, `/tseny`, `/kejsy`, `/otzyvy`, `/kontakty`, `/admin`)
+- `src/data` — клиентские данные (филиалы, врачи, прайс)
+- `server/` — Express API, сидирование SQLite и интеграция SQNS
+- `public/` — статические ассеты: фото врачей, оборудования, иконки
 
-## Дизайн-система
+## Филиалы
 
-Все цвета, шрифты и отступы описаны через CSS-переменные в `src/styles/index.css`.
+Сайт отображает два филиала в Тобольске:
 
-Основные токены:
+- **7а микрорайон** — `+7 (912) 388-78-12`
+- **15-й микрорайон (детская стоматология)** — `+7 (922) 268-80-09`
 
-- Фон: `--bg-primary: #FDFBF8`, `--bg-secondary: #F4F1EC`
-- Текст: `--ink: #0F0F0F`, `--text-secondary: #5A5854`, `--text-muted: #8E8C86`
-- Акценты: `--accent-primary: #5A8C78` (sage), `--accent-secondary: #C9A87C` (gold)
-- Радиусы: `--radius-card: 2rem`, `--radius-pill: 9999px`
-- Тени: `--shadow-sm/md/lg`
-- Шрифты: Manrope (заголовки), Inter (тело)
+## Админка
 
-## Ассеты (заглушки / на замену)
+Админ-панель доступна по адресу `/admin`. Доступ по логину и паролю из `.env`. Администратор создаётся только если задан `ADMIN_PASSWORD`.
 
-В `public/` размещены SVG-заглушки. Для production замените их на реальные файлы по путям:
+## Переменные окружения
 
-### Видео
+```env
+PORT=3001
+KARAT_SECRET=           # обязателен — без него сервер не запустится
+ADMIN_LOGIN=admin
+ADMIN_PASSWORD=         # если не задан, администратор не создаётся
+```
 
-- `public/videos/hero-loop.mp4` — 5-10 сек loop, H.264, < 3 MB
+Для интеграции с SQNS:
 
-### Hero
+```env
+SQNS_ENABLED=1
+SQNS_BASE=https://crmexchange.1denta.ru
+SQNS_EMAIL=
+SQNS_PASSWORD=
+```
 
-- `public/images/hero/clinic-interior.jpg` — fallback для видео
-- `public/images/hero/smile-after.jpg` — базовое изображение идеальной улыбки
-- `public/images/hero/smile-before.jpg` — изображение «до» для интерактивного canvas
+## Примечания
 
-### Врачи
-
-- `public/images/doctors/doctor-1.jpg`
-- `public/images/doctors/doctor-2.jpg`
-- `public/images/doctors/doctor-3.jpg`
-- `public/images/doctors/doctor-4.jpg`
-
-### Кейсы до/после
-
-- `public/images/cases/case-{1..3}-before.jpg`
-- `public/images/cases/case-{1..3}-after.jpg`
-
-### Оборудование
-
-- `public/images/equipment/equipment-1.jpg`
-- `public/images/equipment/equipment-2.jpg`
-- `public/images/equipment/equipment-3.jpg`
-
-### Отзывы
-
-- `public/images/testimonials/patient-1.jpg`
-- `public/images/testimonials/patient-2.jpg`
-- `public/images/testimonials/patient-3.jpg`
-
-### 3D-модель (опционально)
-
-- `public/models/tooth.glb` — если появится, можно подключить `@react-three/fiber` в `Technology.tsx`
-
-После замены изображений уберите `.svg`-расширения в импортах секций (сейчас используются `.svg`-заглушки).
-
-## Особенности
-
-- Custom cursor с spring-физикой и hover-скейлом
-- Page loader с анимированным счётчиком 000 → 100
-- Lenis smooth scroll
-- Hero с интерактивным before/after canvas
-- Hover-responsive services list
-- Count-up статистика
-- Аккордеон FAQ с spring-анимацией
-- Booking modal с фокус-управлением и escape/backdrop закрытием
-- prefers-reduced-motion уважается во всех анимациях
-
-## Расширение на многостраничный сайт
-
-В `App.tsx` уже используется `react-router-dom` с `BrowserRouter`. Добавьте новые `Route` и замените якорные ссылки в `Header` на `Link` из `react-router-dom`.
+- Врачи и цены берутся из SQLite-базы; начальные данные задаются в `server/seedData.js`.
+- Фото врачей находятся в `public/images/doctors/`.
+- Актуальный прайс-лист ведётся в `src/data/prices.ts`.
+- Для production замените стандартные `.env`-credentials на надёжные и включите HTTPS.

@@ -5,7 +5,7 @@ export const doctors: Doctor[] = [
     id: 'amonatzoda',
     name: 'Амонатзода Салмон Рахимович',
     role: 'Стоматолог-терапевт',
-    photo: '/images/doctors/Amonatzoda.jpg',
+    photo: '/images/doctors/Amonatzoda.webp',
     chief: false,
     branchIds: ['m7a'],
     services: [
@@ -34,7 +34,7 @@ export const doctors: Doctor[] = [
     id: 'irisbekov',
     name: 'Ырысбеков Эгем Ныязалиевич',
     role: 'Терапевт, хирург, ортопед',
-    photo: '/images/doctors/Irisbekov.jpg',
+    photo: '/images/doctors/Irisbekov.webp',
     chief: false,
     branchIds: ['m15'],
     services: [
@@ -82,7 +82,7 @@ export const doctors: Doctor[] = [
     id: 'rabadanov',
     name: 'Рабаданов Багомед Рабаданович',
     role: 'Стоматолог-терапевт',
-    photo: '/images/doctors/Rabadanov.jpg',
+    photo: '/images/doctors/Rabadanov.webp',
     imgClass: 'scale-[1.8]',
     chief: false,
     branchIds: ['m7a'],
@@ -112,7 +112,7 @@ export const doctors: Doctor[] = [
     id: 'konovalova',
     name: 'Коновалова Ксения Ильинична',
     role: 'Взрослый и детский ортодонт',
-    photo: '/images/doctors/Konovalova.jpg',
+    photo: '/images/doctors/Konovalova.webp',
     chief: false,
     branchIds: ['m15'],
     services: [
@@ -146,7 +146,7 @@ export const doctors: Doctor[] = [
     id: 'suhanova',
     name: 'Суханова Марина Николаевна',
     role: 'Детский и взрослый терапевт, детский хирург',
-    photo: '/images/doctors/Sukhanova.jpg',
+    photo: '/images/doctors/Sukhanova.webp',
     chief: true,
     branchIds: ['m15'],
     services: [
@@ -224,7 +224,7 @@ export const doctors: Doctor[] = [
     id: 'sukhorukova',
     name: 'Сухорукова Регина Рафисовна',
     role: 'Детский и взрослый терапевт',
-    photo: '/images/doctors/Sukhorukova.jpg',
+    photo: '/images/doctors/Sukhorukova.webp',
     chief: false,
     branchIds: ['m15'],
     services: [

@@ -45,6 +45,7 @@ export function Doctors({ onBook }: DoctorsProps) {
                       alt={name}
                       className={`h-full w-full origin-top object-cover object-top ${imgClass ?? 'scale-[1.35]'}`}
                       loading="lazy"
+                      decoding="async"
                     />
                   ) : (
                     <span className="flex h-full w-full items-center justify-center bg-accent-secondary-300 font-display text-xl font-semibold text-accent-primary-700 sm:text-2xl lg:text-3xl">

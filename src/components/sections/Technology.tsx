@@ -12,10 +12,11 @@ export function Technology() {
       className="relative z-20 -mt-6 min-h-[70vh] overflow-hidden rounded-t-[1.75rem] lg:-mt-9 lg:rounded-t-[2.5rem]"
     >
       <img
-        src="/images/technology-hero.jpg"
+        src="/images/technology-hero.webp"
         alt="Современный кабинет стоматологии KARAT TITAN"
         className="absolute inset-0 h-full w-full object-cover"
         loading="lazy"
+        decoding="async"
       />
       <div
         className="absolute inset-0"

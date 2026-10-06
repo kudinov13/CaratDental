@@ -9,7 +9,7 @@ const socialLinks = [
   { href: 'https://vk.com/karattobolsk', label: 'VKontakte', icon: siVk },
   { href: 'https://t.me/+79123887812', label: 'Telegram', icon: siTelegram },
   { href: 'https://wa.me/79829718197', label: 'WhatsApp', icon: siWhatsapp },
-  { href: 'https://max.ru/id7206060623_bot', label: 'MAX', imageSrc: '/images/max-icon.png' },
+  { href: 'https://max.ru/id7206060623_bot', label: 'MAX', imageSrc: '/images/max-icon.webp' },
   { href: 'mailto:karattob@gmail.com', label: 'Gmail', icon: siGmail },
 ]
 
@@ -40,10 +40,11 @@ export function About() {
           <ScrollReveal delay={0.1}>
             <div className="overflow-hidden rounded-[1.35rem] border border-line bg-bg-secondary shadow-sm">
               <img
-                src="/images/team.jpg"
+                src="/images/team.webp"
                 alt="Команда врачей клиники KARAT TITAN"
                 className="aspect-square w-full object-contain"
                 loading="lazy"
+                decoding="async"
               />
             </div>
           </ScrollReveal>

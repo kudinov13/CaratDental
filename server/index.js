@@ -5,7 +5,8 @@ import { fileURLToPath } from 'node:url'
 import { dirname, join } from 'node:path'
 import helmet from 'helmet'
 import rateLimit from 'express-rate-limit'
-import { readFileSync } from 'node:fs'
+import { existsSync, readFileSync } from 'node:fs'
+import { extname } from 'node:path'
 import db from './db.js'
 import * as sqns from './sqns.js'
 import * as gigachat from './gigachat.js'
@@ -697,10 +698,51 @@ app.post('/api/chat', chatLimiter, async (req, res) => {
 // ---------- Static SPA ----------
 
 const distDir = join(__dirname, '..', 'dist')
-app.use(express.static(distDir))
+const indexFile = join(distDir, 'index.html')
+
+const sendHtml = (res, file, status = 200) => {
+  res.setHeader('Cache-Control', 'no-cache')
+  res.status(status).sendFile(file)
+}
+
+app.use(express.static(distDir, {
+  index: false,
+  redirect: false,
+  setHeaders(res, filePath) {
+    if (/\.html$/i.test(filePath)) {
+      res.setHeader('Cache-Control', 'no-cache')
+    } else if (/[/\\]assets[/\\]/.test(filePath)) {
+      // vite-хэшированные бандлы — можно кэшировать навсегда
+      res.setHeader('Cache-Control', 'public, max-age=31536000, immutable')
+    } else if (/[/\\]images[/\\]/.test(filePath) || /\.(woff2?|png|svg|ico|webmanifest)$/i.test(filePath)) {
+      res.setHeader('Cache-Control', 'public, max-age=2592000')
+    }
+  },
+}))
+
 app.use((req, res, next) => {
   if (req.method !== 'GET' || req.path.startsWith('/api/')) return next()
-  res.sendFile(join(distDir, 'index.html'), (err) => { if (err) next() })
+
+  const path = req.path
+  // trailing slash у известных страниц → 301 на канонический URL
+  if (path.length > 1 && path.endsWith('/')) {
+    const bare = path.slice(0, -1)
+    if (existsSync(join(distDir, bare, 'index.html'))) {
+      const query = req.originalUrl.slice(req.path.length)
+      return res.redirect(301, bare + query)
+    }
+  }
+
+  if (path === '/') return sendHtml(res, indexFile)
+
+  const pageFile = join(distDir, path, 'index.html')
+  if (existsSync(pageFile)) return sendHtml(res, pageFile)
+
+  // Запросы файлов, которых нет, — честный 404
+  if (extname(path)) return res.status(404).end()
+
+  // Неизвестный путь: SPA-фолбэк (React `*` рендерит лендинг), но статус 404
+  return sendHtml(res, indexFile, 404)
 })
 
 const PORT = process.env.PORT || 3001

@@ -2,12 +2,7 @@ import { ArrowRight } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import { ScrollReveal } from '../ScrollReveal'
 import { CaseSlider } from '../CaseSlider'
-
-const cases = [
-  { before: '/images/cases/case-1-before.jpg', after: '/images/cases/case-1-after.jpg', title: 'Отбеливание зубов' },
-  { before: '/images/cases/case-2-before.jpg', after: '/images/cases/case-2-after.jpg', title: 'Эстетические виниры' },
-  { before: '/images/cases/case-3-before.jpg', after: '/images/cases/case-3-after.jpg', title: 'Исправление прикуса' },
-]
+import { clinicCases as cases } from '../../data/cases'
 
 export function Cases() {
   return (

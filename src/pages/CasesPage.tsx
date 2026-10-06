@@ -1,11 +1,6 @@
 import { ScrollReveal } from '../components/ScrollReveal'
 import { CaseSlider } from '../components/CaseSlider'
-
-const cases = [
-  { before: '/images/cases/case-1-before.jpg', after: '/images/cases/case-1-after.jpg', title: 'Отбеливание зубов', description: 'Профессиональное отбеливание, результат за один визит' },
-  { before: '/images/cases/case-2-before.jpg', after: '/images/cases/case-2-after.jpg', title: 'Эстетические виниры', description: 'Установка керамических виниров на передние зубы' },
-  { before: '/images/cases/case-3-before.jpg', after: '/images/cases/case-3-after.jpg', title: 'Исправление прикуса', description: 'Ортодонтическое лечение, срок 14 месяцев' },
-]
+import { clinicCases as cases } from '../data/cases'
 
 export function CasesPage() {
   return (

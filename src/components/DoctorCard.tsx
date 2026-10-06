@@ -32,6 +32,7 @@ export function DoctorCard({
           src={image}
           alt={`${name}, ${role}`}
           loading="lazy"
+          decoding="async"
           className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
         />
       </div>

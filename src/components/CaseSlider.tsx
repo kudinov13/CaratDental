@@ -50,12 +50,14 @@ export function CaseSlider({ beforeSrc, afterSrc, alt }: CaseSliderProps) {
         src={afterSrc}
         alt={`После: ${alt}`}
         loading="lazy"
+        decoding="async"
         className="absolute inset-0 h-full w-full object-cover"
       />
       <img
         src={beforeSrc}
         alt={`До: ${alt}`}
         loading="lazy"
+        decoding="async"
         className="absolute inset-0 h-full w-full object-cover"
         style={{ clipPath: `inset(0 calc(100% - ${position}%) 0 0)` }}
       />

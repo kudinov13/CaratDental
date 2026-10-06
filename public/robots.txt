@@ -1,5 +1,6 @@
 User-agent: *
 Allow: /
 Disallow: /admin
+Disallow: /api/
 
-Sitemap: https://karat-tobolsk.ru/sitemap.xml
+Sitemap: https://karat-titan.ru/sitemap.xml

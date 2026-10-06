@@ -1,7 +1,5 @@
-import { useState } from 'react'
+import { lazy, Suspense, useEffect, useState } from 'react'
 import { BrowserRouter, Outlet, Route, Routes } from 'react-router-dom'
-import { BookingModal } from './components/BookingModal'
-import { ChatBot } from './components/ChatBot'
 import { PageLoader } from './components/PageLoader'
 import { ScrollToTop } from './components/ScrollToTop'
 import { SkipLink } from './components/SkipLink'
@@ -20,30 +18,79 @@ import { Testimonials } from './components/sections/Testimonials'
 import { BranchProvider } from './context/BranchContext'
 import { ClinicProvider } from './context/ClinicContext'
 import { useBooking } from './hooks/useBooking'
-import { CasesPage } from './pages/CasesPage'
-import { ContactsPage } from './pages/ContactsPage'
-import { DoctorsPage } from './pages/DoctorsPage'
-import { PricesPage } from './pages/PricesPage'
-import { PrivacyPage } from './pages/PrivacyPage'
-import { AdminPage } from './pages/admin/AdminPage'
-import { ReviewsPage } from './pages/ReviewsPage'
-import { ServicesPage } from './pages/ServicesPage'
+import { usePageMeta } from './seo/usePageMeta'
+
+const BookingModal = lazy(() =>
+  import('./components/BookingModal').then((m) => ({ default: m.BookingModal }))
+)
+const ChatBot = lazy(() => import('./components/ChatBot').then((m) => ({ default: m.ChatBot })))
+const ServicesPage = lazy(() =>
+  import('./pages/ServicesPage').then((m) => ({ default: m.ServicesPage }))
+)
+const DoctorsPage = lazy(() =>
+  import('./pages/DoctorsPage').then((m) => ({ default: m.DoctorsPage }))
+)
+const PricesPage = lazy(() =>
+  import('./pages/PricesPage').then((m) => ({ default: m.PricesPage }))
+)
+const CasesPage = lazy(() =>
+  import('./pages/CasesPage').then((m) => ({ default: m.CasesPage }))
+)
+const ReviewsPage = lazy(() =>
+  import('./pages/ReviewsPage').then((m) => ({ default: m.ReviewsPage }))
+)
+const ContactsPage = lazy(() =>
+  import('./pages/ContactsPage').then((m) => ({ default: m.ContactsPage }))
+)
+const PrivacyPage = lazy(() =>
+  import('./pages/PrivacyPage').then((m) => ({ default: m.PrivacyPage }))
+)
+const AdminPage = lazy(() =>
+  import('./pages/admin/AdminPage').then((m) => ({ default: m.AdminPage }))
+)
 
 function Layout() {
+  usePageMeta()
   const [bookingOpen, setBookingOpen] = useState(false)
+  const [bookingMounted, setBookingMounted] = useState(false)
   const [preselectDoctor, setPreselectDoctor] = useState('')
+  const [chatMounted, setChatMounted] = useState(false)
+
   const openBooking = (doctorId?: string) => {
     setPreselectDoctor(doctorId || '')
+    setBookingMounted(true)
     setBookingOpen(true)
   }
+
+  // Чат монтируем после простоя / первого взаимодействия — не грузим его код на старте
+  useEffect(() => {
+    const mount = () => setChatMounted(true)
+    const idleId = window.requestIdleCallback?.(mount)
+    const timeoutId = idleId === undefined ? window.setTimeout(mount, 4000) : undefined
+    const onInteract = () => mount()
+    window.addEventListener('pointerdown', onInteract, { once: true })
+    return () => {
+      if (idleId !== undefined) window.cancelIdleCallback?.(idleId)
+      if (timeoutId !== undefined) window.clearTimeout(timeoutId)
+      window.removeEventListener('pointerdown', onInteract)
+    }
+  }, [])
 
   return (
     <>
       <Header onBook={() => openBooking()} />
       <Outlet context={{ openBooking }} />
       <Footer />
-      <BookingModal open={bookingOpen} onOpenChange={setBookingOpen} initialDoctorId={preselectDoctor} />
-      <ChatBot onBook={() => openBooking()} />
+      {bookingMounted && (
+        <Suspense fallback={null}>
+          <BookingModal open={bookingOpen} onOpenChange={setBookingOpen} initialDoctorId={preselectDoctor} />
+        </Suspense>
+      )}
+      {chatMounted && (
+        <Suspense fallback={null}>
+          <ChatBot onBook={() => openBooking()} />
+        </Suspense>
+      )}
     </>
   )
 }
@@ -84,14 +131,14 @@ function App() {
         <Routes>
           <Route element={<Layout />}>
             <Route path="/" element={<LandingPage />} />
-            <Route path="/uslugi" element={<ServicesPage />} />
-            <Route path="/vrachi" element={<DoctorsPage />} />
-            <Route path="/tseny" element={<PricesPage />} />
-            <Route path="/kejsy" element={<CasesPage />} />
-            <Route path="/otzyvy" element={<ReviewsPage />} />
-            <Route path="/kontakty" element={<ContactsPage />} />
-            <Route path="/politika-konfidencialnosti" element={<PrivacyPage />} />
-            <Route path="/admin" element={<AdminPage />} />
+            <Route path="/uslugi" element={<Suspense fallback={null}><ServicesPage /></Suspense>} />
+            <Route path="/vrachi" element={<Suspense fallback={null}><DoctorsPage /></Suspense>} />
+            <Route path="/tseny" element={<Suspense fallback={null}><PricesPage /></Suspense>} />
+            <Route path="/kejsy" element={<Suspense fallback={null}><CasesPage /></Suspense>} />
+            <Route path="/otzyvy" element={<Suspense fallback={null}><ReviewsPage /></Suspense>} />
+            <Route path="/kontakty" element={<Suspense fallback={null}><ContactsPage /></Suspense>} />
+            <Route path="/politika-konfidencialnosti" element={<Suspense fallback={null}><PrivacyPage /></Suspense>} />
+            <Route path="/admin" element={<Suspense fallback={null}><AdminPage /></Suspense>} />
             <Route path="*" element={<LandingPage />} />
           </Route>
         </Routes>

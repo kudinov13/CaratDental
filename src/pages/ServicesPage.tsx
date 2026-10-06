@@ -3,34 +3,7 @@ import { ScrollReveal } from '../components/ScrollReveal'
 import { useBooking } from '../hooks/useBooking'
 import { useClinic } from '../context/clinic'
 import { formatPrice } from '../data/clinic'
-
-const categories = [
-  {
-    title: 'Терапия',
-    description: 'Лечение кариеса, пульпита и каналов. Пломбирование современными материалами, анестезия включена.',
-    keywords: ['кариес', 'канал', 'приём', 'осмотр'],
-  },
-  {
-    title: 'Эстетика',
-    description: 'Отбеливание, виниры и реставрации. Возвращаем улыбке естественную красоту.',
-    keywords: ['отбеливание', 'реставрация', 'винир'],
-  },
-  {
-    title: 'Имплантация',
-    description: 'Восстановление зубов имплантатами — надёжно и с пожизненной гарантией.',
-    keywords: ['имплант'],
-  },
-  {
-    title: 'Ортодонтия',
-    description: 'Исправление прикуса брекетами и элайнерами для взрослых и детей.',
-    keywords: ['ортодонт', 'прикус', 'брекет'],
-  },
-  {
-    title: 'Профилактика',
-    description: 'Профессиональная чистка, герметизация фиссур, реминерализация.',
-    keywords: ['чистка', 'гигиена', 'профилакт'],
-  },
-]
+import { serviceCategories as categories } from '../data/services'
 
 export function ServicesPage() {
   const { openBooking } = useBooking()

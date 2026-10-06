@@ -3,13 +3,7 @@ import { Star } from 'lucide-react'
 import { ScrollReveal } from '../components/ScrollReveal'
 import { useClinic } from '../context/clinic'
 import { clsx } from 'clsx'
-
-const reviews = [
-  { name: 'Анна, 34 года', text: 'Спасибо клинике KARAT TITAN за мою новую улыбку! Всё прошло легко, без боли и с отличным результатом.', tag: 'Лечение и реставрация', branchId: 'm7a', rating: 5 },
-  { name: 'Мария', text: 'Хорошая стоматология. Лечат кариес, делают профилактические осмотры и чистки, исправляют прикус. Врачи находят общий язык с ребёнком!', tag: 'Детское лечение', branchId: 'm15', rating: 5 },
-  { name: 'Сергей', text: 'Лучшая детская стоматология! Лечили кариес — сын вышел от врача с улыбкой и подарком. Профессиональная чистка тоже на высоте.', tag: 'Детское лечение', branchId: 'm15', rating: 5 },
-  { name: 'Ольга, 41 год', text: 'Ставила имплант у хирурга — всё быстро и безболезненно. Спасибо за внимательное отношение и понятный план лечения.', tag: 'Имплантация', branchId: 'm7a', rating: 5 },
-]
+import { reviews } from '../data/reviews'
 
 export function ReviewsPage() {
   const { branches } = useClinic()

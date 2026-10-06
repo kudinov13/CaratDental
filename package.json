@@ -7,11 +7,14 @@
     "dev": "vite",
     "server": "node server/index.js",
     "dev:all": "concurrently -n web,api \"npm run dev\" \"npm run server\"",
-    "build": "tsc -b && vite build",
+    "build": "tsc -b && vite build && node scripts/prerender.mjs",
+    "optimize:images": "node scripts/optimize-images.mjs",
     "lint": "oxlint",
     "preview": "vite preview"
   },
   "dependencies": {
+    "@fontsource/inter": "5.1.0",
+    "@fontsource/lora": "5.1.0",
     "@gsap/react": "^2.1.2",
     "@radix-ui/react-dialog": "^1.1.23",
     "@radix-ui/react-select": "^2.3.7",
@@ -39,6 +42,7 @@
     "@types/react-dom": "^19.2.3",
     "@vitejs/plugin-react": "^6.0.3",
     "oxlint": "^1.71.0",
+    "sharp": "0.33.5",
     "typescript": "~6.0.2",
     "vite": "^8.1.1"
   }

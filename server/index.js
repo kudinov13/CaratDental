@@ -721,7 +721,7 @@ app.use(express.static(distDir, {
 }))
 
 app.use((req, res, next) => {
-  if (req.method !== 'GET' || req.path.startsWith('/api/')) return next()
+  if ((req.method !== 'GET' && req.method !== 'HEAD') || req.path.startsWith('/api/')) return next()
 
   const path = req.path
   // trailing slash у известных страниц → 301 на канонический URL

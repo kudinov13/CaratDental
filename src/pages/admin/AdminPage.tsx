@@ -292,7 +292,7 @@ function DoctorsTab({ token }: { token: string }) {
 
       {edit && (
         <div className="fixed inset-0 z-[95] flex items-center justify-center bg-ink/30 p-4 backdrop-blur-sm" onClick={() => setEdit(null)}>
-          <div className="max-h-[90dvh] w-full max-w-lg overflow-y-auto rounded-[1.35rem] bg-surface p-6" onClick={(e) => e.stopPropagation()}>
+          <div data-lenis-prevent className="max-h-[90dvh] w-full max-w-lg overflow-y-auto overscroll-contain rounded-[1.35rem] bg-surface p-6" onClick={(e) => e.stopPropagation()}>
             <h3 className="font-display text-xl font-semibold text-ink">{doctors.some((d) => d.id === edit.id) ? 'Редактировать врача' : 'Новый врач'}</h3>
 
             <div className="mt-4 space-y-3">

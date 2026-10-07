@@ -183,7 +183,8 @@ export function BookingModal({ open, onOpenChange, initialDoctorId }: BookingMod
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.96, y: 24 }}
             transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-            className="fixed left-1/2 top-1/2 z-[101] max-h-[92dvh] w-[calc(100%-1.5rem)] max-w-2xl -translate-x-1/2 -translate-y-1/2 overflow-y-auto rounded-[2rem] border border-line bg-bg-primary p-5 shadow-2xl md:p-8"
+            data-lenis-prevent
+            className="fixed left-1/2 top-1/2 z-[101] max-h-[92dvh] w-[calc(100%-1.5rem)] max-w-2xl -translate-x-1/2 -translate-y-1/2 overflow-y-auto overscroll-contain rounded-[2rem] border border-line bg-bg-primary p-5 shadow-2xl md:p-8"
           >
             <div className="mb-5 flex items-start justify-between">
               <div>

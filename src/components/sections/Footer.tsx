@@ -1,4 +1,4 @@
-import { MapPin } from 'lucide-react'
+import { LockKeyhole, MapPin } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import { ScrollReveal } from '../ScrollReveal'
 import { Logo } from '../Logo'
@@ -60,13 +60,20 @@ export function Footer() {
         </div>
 
         <div className="mt-16 flex flex-col items-center justify-between gap-4 border-t border-white/10 pt-8 text-sm text-text-inverse/50 md:flex-row">
-          <p>© 2025 Karat Titan. Все права защищены.</p>
+          <p>© 2026 Karat Titan. Все права защищены.</p>
           <div className="flex gap-6">
             <Link to="/politika-konfidencialnosti" className="transition-colors hover:text-text-inverse">
               Политика конфиденциальности
             </Link>
             <Link to="/kontakty" className="transition-colors hover:text-text-inverse">
               Контакты
+            </Link>
+            <Link
+              to="/admin"
+              className="flex items-center gap-1.5 transition-colors hover:text-text-inverse"
+            >
+              <LockKeyhole size={13} aria-hidden="true" />
+              Вход для сотрудников
             </Link>
           </div>
         </div>

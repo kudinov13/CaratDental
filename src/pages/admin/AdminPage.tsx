@@ -243,6 +243,7 @@ function BookingsTab({ token }: { token: string }) {
 function DoctorsTab({ token }: { token: string }) {
   const { doctors, branches } = useClinic()
   const [edit, setEdit] = useState<any | null>(null)
+  const [showSqns, setShowSqns] = useState(false)
 
   const save = () => {
     const method = edit.id?.startsWith('d') && doctors.some((d) => d.id === edit.id) ? 'PUT' : 'POST'
@@ -320,13 +321,19 @@ function DoctorsTab({ token }: { token: string }) {
               </div>
 
               <div>
-                <span className="mb-1.5 block text-xs font-semibold text-text-secondary">Услуги и цены</span>
+                <div className="mb-1.5 flex items-center justify-between gap-2">
+                  <span className="block text-xs font-semibold text-text-secondary">Услуги и цены</span>
+                  <label className="flex cursor-pointer items-center gap-1.5 text-[11px] text-text-secondary">
+                    <input type="checkbox" checked={showSqns} onChange={(e) => setShowSqns(e.target.checked)} className="h-3 w-3" />
+                    Служебные поля 1Дента
+                  </label>
+                </div>
                 {edit.services.map((s: any, i: number) => (
                   <div key={i} className="mb-2 flex gap-2">
                     <input value={s.name} onChange={(e) => { const ss = [...edit.services]; ss[i] = { ...s, name: e.target.value }; setEdit({ ...edit, services: ss }) }} placeholder="Услуга" className={miniInput + ' flex-1'} />
                     <input value={s.price} type="number" onChange={(e) => { const ss = [...edit.services]; ss[i] = { ...s, price: Number(e.target.value) }; setEdit({ ...edit, services: ss }) }} placeholder="₽" className={miniInput + ' w-20'} />
                     <input value={s.durationMin} type="number" onChange={(e) => { const ss = [...edit.services]; ss[i] = { ...s, durationMin: Number(e.target.value) }; setEdit({ ...edit, services: ss }) }} placeholder="мин" className={miniInput + ' w-16'} />
-                    <input value={s.sqnsServiceId ?? ''} onChange={(e) => { const ss = [...edit.services]; ss[i] = { ...s, sqnsServiceId: e.target.value || undefined }; setEdit({ ...edit, services: ss }) }} placeholder="SQNS id" className={miniInput + ' w-20'} />
+                    {showSqns && <input value={s.sqnsServiceId ?? ''} title="ID услуги в 1Денте — заполняет администратор системы" onChange={(e) => { const ss = [...edit.services]; ss[i] = { ...s, sqnsServiceId: e.target.value || undefined }; setEdit({ ...edit, services: ss }) }} placeholder="1Дента id" className={miniInput + ' w-20'} />}
                   </div>
                 ))}
                 <button type="button" onClick={() => setEdit({ ...edit, services: [...edit.services, { name: '', price: 0, durationMin: 30 }] })} className="cursor-pointer text-xs font-semibold text-accent-primary hover:underline">

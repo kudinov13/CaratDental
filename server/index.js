@@ -531,8 +531,11 @@ function botKnowledge() {
 function systemPrompt() {
   const { branches, doctors } = clinicData()
   const docList = doctors.map((d) =>
-    `- ${d.name} (${d.role}), филиалы: ${d.branchIds.join(', ')}, услуги: ${d.services.slice(0, 12).map((s) => s.name).join('; ')}`
+    `- ${d.id}: ${d.name} (${d.role}), филиалы: ${d.branchIds.join(', ')}, услуги: ${d.services.slice(0, 12).map((s) => s.name).join('; ')}`
   ).join('\n')
+  const priceOf = (re) => doctors.flatMap((d) => d.services).find((s) => re.test(s.name))?.price
+  const orthoConsult = priceOf(/консультац.*ортодонт|ортодонт.*консультац/i) || 1200
+  const bracesPrice = priceOf(/брекет/i) || 60000
   return `Ты — помощник стоматологической клиники «Карат Титан» в Тобольске на сайте клиники.
 Сегодня: ${todayStr()} (формат YYYY-MM-DD). Записывать можно только на завтра и позже.
 
@@ -554,8 +557,11 @@ function systemPrompt() {
   время» — и жди ответа.
 - ЗАПРЕЩЕНО отправлять пациента звонить по телефону для записи — запись делаешь ты через
   функции. Фразы «позвоните, чтобы записаться» не использовать никогда.
-- Пример правильного ответа на «сколько стоит брекеты?»:
-  «Консультация ортодонта — 1 200 ₽, фиксация брекет-системы — от 60 000 ₽, точную
+- Цены называй ТОЛЬКО из ответа функции get_prices — это актуальный прайс в реальном
+  времени. Цифры из базы знаний могут устареть: используй её для правил и советов, а не
+  для конкретных цен. Если по запросу цены нет — скажи, что стоимость уточнит врач.
+- Пример правильного ответа на «сколько стоит брекеты?» (сначала вызови get_prices):
+  «Консультация ортодонта — ${orthoConsult.toLocaleString('ru-RU')} ₽, фиксация брекет-системы — от ${bracesPrice.toLocaleString('ru-RU')} ₽, точную
   стоимость врач назовёт после осмотра. Хотите, запишу вас к Коноваловой Ксении Ильиничне
   на 15-м мкр.? Назовите удобный день — посмотрю свободное время».
 - Если пациент соглашается или сразу описывает проблему/хочет записаться — веди по шагам:
@@ -591,6 +597,18 @@ const chatFunctions = [
     parameters: {
       type: 'object',
       properties: { branch_id: { type: 'string', description: 'id филиала (m7a или m15), необязательно' } },
+      required: [],
+    },
+  },
+  {
+    name: 'get_prices',
+    description: 'Актуальный прайс клиники из базы: услуги, цены и длительность. Используй для любых вопросов о стоимости.',
+    parameters: {
+      type: 'object',
+      properties: {
+        query: { type: 'string', description: 'часть названия услуги (например "брекет", "кариес"), необязательно' },
+        doctor_id: { type: 'string', description: 'id врача — только услуги этого врача, необязательно' },
+      },
       required: [],
     },
   },
@@ -635,6 +653,15 @@ async function runChatTool(name, args) {
         .filter((d) => !args.branch_id || d.branchIds.includes(args.branch_id))
         .map((d) => ({ id: d.id, name: d.name, role: d.role, branches: d.branchIds })),
     }
+  if (name === 'get_prices') {
+    const q = String(args.query || '').toLowerCase().trim()
+    const list = doctors
+      .filter((d) => !args.doctor_id || d.id === args.doctor_id)
+      .flatMap((d) => d.services.map((s) => ({ doctor: d.name, service: s.name, price: s.price, durationMin: s.durationMin })))
+      .filter((s) => !q || s.service.toLowerCase().includes(q))
+      .slice(0, 40)
+    return list.length ? { services: list } : { error: 'По запросу услуги не найдены' }
+  }
   if (name === 'get_slots') {
     const doctor = doctors.find((d) => d.id === args.doctor_id)
     if (!doctor) return { error: 'Врач не найден' }

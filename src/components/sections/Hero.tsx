@@ -120,9 +120,9 @@ export function Hero({ onBook }: HeroProps) {
           {/* Content */}
           <div className="absolute inset-0 z-0 overflow-hidden">
             <picture>
-              <source media="(min-width: 1024px)" srcSet="/images/Hero_One.webp" />
+              <source media="(min-width: 1024px)" srcSet="/images/Hero_One.?v=2" />
               <img
-                src="/images/Hero-mobile.webp"
+                src="/images/Hero-mobile.webp?v=2"
                 alt="Врач клиники KARAT TITAN"
                 fetchPriority="high"
                 decoding="async"

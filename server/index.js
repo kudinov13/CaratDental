@@ -332,17 +332,23 @@ async function createBooking(input) {
   if (sqns.sqnsEnabled && doctor.sqns_employee_id) {
     try {
       const serviceIds = await sqnsServiceIdsFor(doctorId, doctor.sqns_employee_id, service)
-      const visit = await sqns.createVisit({
-        name,
-        phone,
-        datetime: `${date}T${time}:00+05:00`,
-        serviceIds,
-      })
-      sqnsVisitId = visit.visit?.id ? String(visit.visit.id) : null
+      // Услуг онлайн-записи для врача нет в МИС — записываем локально, визит сделает администратор
+      if (serviceIds.length) {
+        const visit = await sqns.createVisit({
+          name,
+          phone,
+          datetime: `${date}T${time}:00+05:00`,
+          serviceIds,
+        })
+        sqnsVisitId = visit.visit?.id ? String(visit.visit.id) : null
+      } else {
+        console.warn('[SQNS] нет услуг онлайн-записи для врача', doctorId, '— визит не создан в МИС')
+      }
     } catch (e) {
-      console.error('[SQNS] createVisit failed:', e.message)
-      if (e.status === 422 || e.status === 409)
+      // «Слот занят» от МИС — честный конфликт, просим другое время
+      if (e.payload?.code === 'SlotUnavailableError' || e.status === 409)
         return { status: 409, body: { error: 'Это время только что заняли — выберите другое' } }
+      console.error('[SQNS] createVisit failed:', e.message, JSON.stringify(e.payload || {}))
     }
   }
 

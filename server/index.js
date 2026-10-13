@@ -353,6 +353,7 @@ async function createBooking(input) {
           datetime: `${date}T${time}:00+05:00`,
           serviceIds,
           resourceId: String(doctor.sqns_employee_id),
+          comment: [comment, service && `Услуга с сайта: ${service}`].filter(Boolean).join(' | ') || undefined,
         })
         sqnsVisitId = visit.visit?.id ? String(visit.visit.id) : null
       } else {

@@ -78,10 +78,10 @@ export async function availableTimes(employeeId, serviceIds, date) {
 /** Создать запись в МИС. Ответ: { visit: { id, resourceId, datetime, ... } }.
  *  resourceId — ОБЯЗАТЕЛЕН (строка id врача-ресурса): без него МИС сама
  *  назначает первого свободного врача из привязанных к услуге. */
-export const createVisit = ({ name, phone, datetime, serviceIds, resourceId }) =>
+export const createVisit = ({ name, phone, datetime, serviceIds, resourceId, comment }) =>
   api('/api/v2/visit', {
     method: 'POST',
-    body: { visit: { user: { name, phone }, appointment: { datetime, serviceIds, resourceId } } },
+    body: { visit: { user: { name, phone }, comment, appointment: { datetime, serviceIds, resourceId } } },
   })
 
 /** Статус записи: new | confirmed | showedUp | cancel */

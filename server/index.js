@@ -346,9 +346,12 @@ async function createBooking(input) {
       const serviceIds = await sqnsServiceIdsFor(doctorId, doctor.sqns_employee_id, service)
       // Услуг онлайн-записи для врача нет в МИС — записываем локально, визит сделает администратор
       if (serviceIds.length) {
+        // МИС принимает телефон только цифрами с +7; пробелы/скобки дают Invalid value visit.user.phone
+        const digits = phone.replace(/\D/g, '')
+        const normPhone = /^[78]\d{10}$/.test(digits) ? `+7${digits.slice(1)}` : `+${digits}`
         const visit = await sqns.createVisit({
           name,
-          phone,
+          phone: normPhone,
           datetime: `${date}T${time}:00+05:00`,
           serviceIds,
           resourceId: String(doctor.sqns_employee_id),

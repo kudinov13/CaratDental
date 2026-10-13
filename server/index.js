@@ -156,11 +156,9 @@ async function sqnsServiceIdsFor(doctorId, sqnsEmployeeId, serviceName) {
     const byName = mine.find((s) => { const t = norm(s.title); return t === want || t.startsWith(want) || want.startsWith(t) })
     if (byName) return [Number(byName.id)]
   }
-  // Иначе — самая короткая услуга этого врача (обычно осмотр/консультация)
-  const mapped = db.prepare(
-    'SELECT sqns_service_id FROM services WHERE doctor_id = ? AND sqns_service_id IS NOT NULL ORDER BY duration_min ASC'
-  ).all(doctorId)
-  if (mapped.length) return [Number(mapped[0].sqns_service_id)]
+  // Иначе — осмотр/консультация этого врача, либо самая короткая услуга
+  const consult = mine.find((s) => /осмотр|консультац|первичн/i.test(s.title || ''))
+  if (consult) return [Number(consult.id)]
   mine.sort((a, b) => (a.durationSeconds || 0) - (b.durationSeconds || 0))
   return [Number(mine[0].id)]
 }

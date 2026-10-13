@@ -8,6 +8,7 @@ export const seedDoctors = [
     chief: false,
     branchIds: ['m7a'],
     services: [
+      { name: "Осмотр и консультация", price: 600, durationMin: 15, sqnsServiceId: "655" },
       { name: "Иной кариес постоянного зуба К028", price: 3000, durationMin: 60 },
       { name: "Поверхностный кариес постоянного зуба К020", price: 5000, durationMin: 60 },
       { name: "Средний кариес постоянного зуба К021", price: 6500, durationMin: 60 },
@@ -41,6 +42,7 @@ export const seedDoctors = [
     chief: false,
     branchIds: ['m15'],
     services: [
+      { name: "Осмотр и консультация", price: 600, durationMin: 15, sqnsServiceId: "655" },
       { name: "Иной кариес постоянного зуба К028", price: 3000, durationMin: 60 },
       { name: "Поверхностный кариес постоянного зуба К020", price: 5000, durationMin: 60 },
       { name: "Средний кариес постоянного зуба К021", price: 6500, durationMin: 60 },
@@ -94,6 +96,7 @@ export const seedDoctors = [
     chief: false,
     branchIds: ['m7a'],
     services: [
+      { name: "Осмотр и консультация", price: 600, durationMin: 15, sqnsServiceId: "655" },
       { name: "Иной кариес постоянного зуба К028", price: 3000, durationMin: 60 },
       { name: "Поверхностный кариес постоянного зуба К020", price: 5000, durationMin: 60 },
       { name: "Средний кариес постоянного зуба К021", price: 6500, durationMin: 60 },
@@ -127,8 +130,8 @@ export const seedDoctors = [
     chief: false,
     branchIds: ['m15'],
     services: [
-      { name: "Первичная консультация", price: 1200, durationMin: 30 },
-      { name: "Повторная консультация", price: 600, durationMin: 30 },
+      { name: "Первичная консультация", price: 1200, durationMin: 30, sqnsServiceId: "515" },
+      { name: "Повторная консультация", price: 600, durationMin: 30, sqnsServiceId: "516" },
       { name: "КПО — (анализ, слепки, модели)", price: 8100, durationMin: 60 },
       { name: "Фиксация брекет-системы металлические", price: 60000, durationMin: 60 },
       { name: "Фиксация брекет-системы керамические", price: 82800, durationMin: 60 },
@@ -247,6 +250,7 @@ export const seedDoctors = [
     chief: false,
     branchIds: ['m15'],
     services: [
+      { name: "Осмотр и консультация", price: 600, durationMin: 15 },
       { name: "Поверхностный кариес молочного зуба К020", price: 4000, durationMin: 60 },
       { name: "Средний кариес молочного зуба К021", price: 5000, durationMin: 60 },
       { name: "Глубокий кариес молочного зуба К022", price: 6000, durationMin: 60 },

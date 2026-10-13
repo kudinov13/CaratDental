@@ -142,19 +142,27 @@ async function sqnsServiceIdsFor(doctorId, sqnsEmployeeId, serviceName) {
     const row = db.prepare('SELECT sqns_service_id FROM services WHERE doctor_id = ? AND name = ?').get(doctorId, serviceName)
     if (row?.sqns_service_id) return [Number(row.sqns_service_id)]
   }
-  const mapped = db.prepare(
-    'SELECT sqns_service_id, duration_min FROM services WHERE doctor_id = ? AND sqns_service_id IS NOT NULL ORDER BY duration_min ASC'
-  ).all(doctorId)
-  if (mapped.length) return [Number(mapped[0].sqns_service_id)]
-  // Маппинг услуг не настроен — самая короткая услуга SQNS этого врача.
+  const j = await sqns.listBookingServices()
   // Услуги с длительностью > 8 ч пропускаем: в МИС у части услуг забита
   // битая длительность ("30:00"), их createVisit не может распарсить.
-  const j = await sqns.listBookingServices()
   const mine = (j.services || []).filter((s) =>
     (s.resources || []).some((r) => String(r.id) === String(sqnsEmployeeId)) && (s.durationSeconds || 0) <= 28800
   )
+  if (!mine.length) return []
+  // Сначала ищем услугу МИС с таким же названием, как выбранная на сайте
+  if (serviceName) {
+    const norm = (s) => (s || '').toLowerCase().replace(/[^а-яa-z0-9]/g, '')
+    const want = norm(serviceName)
+    const byName = mine.find((s) => { const t = norm(s.title); return t === want || t.startsWith(want) || want.startsWith(t) })
+    if (byName) return [Number(byName.id)]
+  }
+  // Иначе — самая короткая услуга этого врача (обычно осмотр/консультация)
+  const mapped = db.prepare(
+    'SELECT sqns_service_id FROM services WHERE doctor_id = ? AND sqns_service_id IS NOT NULL ORDER BY duration_min ASC'
+  ).all(doctorId)
+  if (mapped.length) return [Number(mapped[0].sqns_service_id)]
   mine.sort((a, b) => (a.durationSeconds || 0) - (b.durationSeconds || 0))
-  return mine.length ? [Number(mine[0].id)] : []
+  return [Number(mine[0].id)]
 }
 
 // Кэш визитов МИС по датам (занятость из 1Дента), TTL 60 сек.

@@ -146,9 +146,13 @@ async function sqnsServiceIdsFor(doctorId, sqnsEmployeeId, serviceName) {
     'SELECT sqns_service_id, duration_min FROM services WHERE doctor_id = ? AND sqns_service_id IS NOT NULL ORDER BY duration_min ASC'
   ).all(doctorId)
   if (mapped.length) return [Number(mapped[0].sqns_service_id)]
-  // Маппинг услуг не настроен — самая короткая услуга SQNS этого врача
+  // Маппинг услуг не настроен — самая короткая услуга SQNS этого врача.
+  // Услуги с длительностью > 8 ч пропускаем: в МИС у части услуг забита
+  // битая длительность ("30:00"), их createVisit не может распарсить.
   const j = await sqns.listBookingServices()
-  const mine = (j.services || []).filter((s) => (s.resources || []).some((r) => String(r.id) === String(sqnsEmployeeId)))
+  const mine = (j.services || []).filter((s) =>
+    (s.resources || []).some((r) => String(r.id) === String(sqnsEmployeeId)) && (s.durationSeconds || 0) <= 28800
+  )
   mine.sort((a, b) => (a.durationSeconds || 0) - (b.durationSeconds || 0))
   return mine.length ? [Number(mine[0].id)] : []
 }
@@ -339,6 +343,7 @@ async function createBooking(input) {
           phone,
           datetime: `${date}T${time}:00+05:00`,
           serviceIds,
+          resourceId: String(doctor.sqns_employee_id),
         })
         sqnsVisitId = visit.visit?.id ? String(visit.visit.id) : null
       } else {

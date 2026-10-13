@@ -75,11 +75,13 @@ export async function availableTimes(employeeId, serviceIds, date) {
   return (j.availableTimeSlots || []).map((s) => s.datetime)
 }
 
-/** Создать запись в МИС. Ответ: { visit: { id, resourceId, datetime, ... } } */
-export const createVisit = ({ name, phone, datetime, serviceIds }) =>
+/** Создать запись в МИС. Ответ: { visit: { id, resourceId, datetime, ... } }.
+ *  resourceId — ОБЯЗАТЕЛЕН (строка id врача-ресурса): без него МИС сама
+ *  назначает первого свободного врача из привязанных к услуге. */
+export const createVisit = ({ name, phone, datetime, serviceIds, resourceId }) =>
   api('/api/v2/visit', {
     method: 'POST',
-    body: { visit: { user: { name, phone }, appointment: { datetime, serviceIds } } },
+    body: { visit: { user: { name, phone }, appointment: { datetime, serviceIds, resourceId } } },
   })
 
 /** Статус записи: new | confirmed | showedUp | cancel */

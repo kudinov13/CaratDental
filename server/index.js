@@ -163,30 +163,20 @@ async function sqnsServiceIdsFor(doctorId, sqnsEmployeeId, serviceName) {
   return [Number(mine[0].id)]
 }
 
-// Кэш визитов МИС по датам (занятость из 1Дента), TTL 60 сек.
-// Храним по дате → Map<resourceId, minutes[]> чтобы один запрос покрывал всех врачей.
-const sqnsVisitsCache = new Map()
-async function sqnsVisitsForRange(from, to) {
-  const key = `${from}..${to}`
-  let entry = sqnsVisitsCache.get(key)
+// Кэш свободного времени МИС (виджет онлайн-записи 1Денты), TTL 30 сек.
+// Ключ: resourceId:date:serviceId — значение Set<'HH:MM'>.
+// Эндпоинт /resource/{id}/time сам учитывает длительности визитов,
+// перерывы и занятое время — это авторитетный источник доступности.
+const sqnsTimesCache = new Map()
+async function sqnsFreeTimes(sqnsEmployeeId, serviceIds, date) {
+  const key = `${sqnsEmployeeId}:${date}:${serviceIds.join(',')}`
+  let entry = sqnsTimesCache.get(key)
   if (!entry || entry.exp < Date.now()) {
-    const j = await sqns.listVisits(from, to)
-    const rows = j.data || j.visits?.data || j.visits || []
-    const byRes = new Map()
-    for (const v of (Array.isArray(rows) ? rows : [])) {
-      if (v.deleted) continue
-      const date = v.datetime?.slice(0, 10)
-      const hhmm = v.datetime?.slice(11, 16)
-      if (!date || !hhmm) continue
-      const rid = String(v.resourceId)
-      const dayKey = `${rid}:${date}`
-      if (!byRes.has(dayKey)) byRes.set(dayKey, [])
-      byRes.get(dayKey).push(Number(hhmm.slice(0, 2)) * 60 + Number(hhmm.slice(3)))
-    }
-    entry = { exp: Date.now() + 60_000, byRes }
-    sqnsVisitsCache.set(key, entry)
+    const times = await sqns.availableTimes(sqnsEmployeeId, serviceIds, date)
+    entry = { exp: Date.now() + 30_000, times: new Set(times.map((t) => t.slice(11, 16))) }
+    sqnsTimesCache.set(key, entry)
   }
-  return entry.byRes
+  return entry.times
 }
 
 // Вычисление слотов для даты. Используется маршрутом /api/slots и функцией бота.
@@ -217,18 +207,20 @@ async function computeSlots(doctorId, date, service) {
     slots.push({ time, available, startMin: m })
   }
 
-  // SQNS: занятое в МИС (ресепшен) помечаем занятым на сайте
+  // SQNS: спрашиваем у МИС реальное свободное время врача (учитывает
+  // длительности существующих визитов, перерывы, график в 1Денте).
   const doc = db.prepare('SELECT sqns_employee_id FROM doctors WHERE id = ?').get(doctorId)
   if (sqns.sqnsEnabled && doc?.sqns_employee_id) {
     try {
-      const byRes = await sqnsVisitsForRange(date, date)
-      const busyStarts = byRes.get(`${doc.sqns_employee_id}:${date}`) || []
-      for (const s of slots) {
-        if (!s.available) continue
-        if (busyStarts.some((b) => b >= s.startMin && b < s.startMin + slotMin)) s.available = false
+      const serviceIds = await sqnsServiceIdsFor(doctorId, doc.sqns_employee_id, service)
+      if (serviceIds.length) {
+        const free = await sqnsFreeTimes(doc.sqns_employee_id, serviceIds, date)
+        for (const s of slots) {
+          if (s.available && !free.has(s.time)) s.available = false
+        }
       }
     } catch (e) {
-      console.error('[SQNS] visits busy check failed:', e.message)
+      console.error('[SQNS] availability check failed:', e.message)
     }
   }
 
@@ -264,12 +256,25 @@ app.get('/api/days', async (req, res) => {
     takenByDate.get(r.date).add(r.time)
   }
 
-  // Занятое в МИС за весь диапазон — один запрос
+  // Свободное время по каждой дате — напрямую из виджета МИС
+  // (учитывает длительности визитов и перерывы, не только старты).
   const doc = db.prepare('SELECT sqns_employee_id FROM doctors WHERE id = ?').get(doctorId)
-  let sqnsByRes = null
+  let misTimes = null
   if (sqns.sqnsEnabled && doc?.sqns_employee_id) {
-    try { sqnsByRes = await sqnsVisitsForRange(from, to) }
-    catch (e) { console.error('[SQNS] days busy check failed:', e.message) }
+    try {
+      const serviceIds = await sqnsServiceIdsFor(doctorId, doc.sqns_employee_id, null)
+      if (serviceIds.length) {
+        const dates = []
+        for (let i = 1; i <= days; i++) {
+          const d = new Date(); d.setDate(d.getDate() + i)
+          dates.push(`${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`)
+        }
+        const lists = await Promise.all(
+          dates.map((date) => sqnsFreeTimes(doc.sqns_employee_id, serviceIds, date).catch(() => null))
+        )
+        misTimes = new Map(dates.map((date, i) => [date, lists[i]]))
+      }
+    } catch (e) { console.error('[SQNS] days availability failed:', e.message) }
   }
 
   const LUNCH_START = 13 * 60, LUNCH_END = 14 * 60
@@ -281,13 +286,13 @@ app.get('/api/days', async (req, res) => {
     if (!sched) { out.push({ date, working: false, free: 0 }); continue }
 
     const taken = takenByDate.get(date) || new Set()
-    const busy = sqnsByRes?.get(`${doc.sqns_employee_id}:${date}`) || []
+    const misFree = misTimes?.get(date)
     let free = 0
     for (let m = sched.start_min; m + slotMin <= sched.end_min; m += slotMin) {
       if (m >= LUNCH_START && m < LUNCH_END) continue
       const time = `${String(Math.floor(m / 60)).padStart(2, '0')}:${String(m % 60).padStart(2, '0')}`
       if (taken.has(time)) continue
-      if (busy.some((b) => b >= m && b < m + slotMin)) continue
+      if (misFree && !misFree.has(time)) continue
       free++
     }
     out.push({ date, working: true, free })
@@ -344,6 +349,11 @@ async function createBooking(input) {
       const serviceIds = await sqnsServiceIdsFor(doctorId, doctor.sqns_employee_id, service)
       // Услуг онлайн-записи для врача нет в МИС — записываем локально, визит сделает администратор
       if (serviceIds.length) {
+        // Свежая проверка: время может быть занято визитом, который перекрывает
+        // слот своей длительностью — список визитов этого не видит, виджет видит.
+        const freeTimes = await sqns.availableTimes(doctor.sqns_employee_id, serviceIds, date)
+        if (!freeTimes.some((t) => t.slice(11, 16) === time))
+          return { status: 409, body: { error: 'Это время уже занято — выберите другое' } }
         // МИС принимает телефон только цифрами с +7; пробелы/скобки дают Invalid value visit.user.phone
         const digits = phone.replace(/\D/g, '')
         const normPhone = /^[78]\d{10}$/.test(digits) ? `+7${digits.slice(1)}` : `+${digits}`
